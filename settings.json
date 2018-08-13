@@ -1,0 +1,21 @@
+{
+	"stellaris_folder_path": "C:\\Users\\ebsan\\Documents\\Paradox Interactive\\Stellaris",
+	"saves_folder_path": ".\\saves",
+	"json_folder_path": ".\\json",
+	"output_folder_path": ".\\output",
+	
+	"current": "mpdemocraticgekkotarepublic_-433043792",
+	
+	"draw": {
+		"image.size": 1200,			
+		"image.color": [0,0,0],
+		"image.scale": 1,			
+		"voronoi.rings": [
+			{ "x": 0, "y": 0, "r": 120, "s": 5 },
+			{ "x": 0, "y": 0, "r": 500, "s": 2 },
+			{ "x": -400, "y": -420, "r": 80, "s": 10 }
+		],
+		"debug": false,
+		"debug.color": [256,256,256]
+	}
+}

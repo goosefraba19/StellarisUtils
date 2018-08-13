@@ -1,0 +1,11 @@
+saves/
+json/
+output/
+temp/
+
+.vs/
+packages/
+bin/
+obj/
+
+__pycache__/

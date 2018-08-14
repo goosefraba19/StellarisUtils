@@ -12,7 +12,7 @@ def get_src_path(settings):
 	return paths[0]
 	
 def get_dest_path(settings):
-	folder_path = settings["output_folder_path"]
+	folder_path = os.path.join(settings["output_folder_path"], settings["current"])
 	
 	if not os.path.exists(folder_path):
 		os.makedirs(folder_path)

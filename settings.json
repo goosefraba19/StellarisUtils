@@ -7,7 +7,8 @@
 	"current": "mpdemocraticgekkotarepublic_-433043792",
 	
 	"draw": {
-		"image.size": 1200,			
+		"image.size": [1200,1200],			
+		"image.center": [600,600],
 		"image.color": [0,0,0],
 		"image.scale": 1,			
 		"voronoi.rings": [

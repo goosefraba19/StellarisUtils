@@ -8,7 +8,7 @@ def get_settings():
 		
 def get_pairs(settings):
 	src_folder_path = os.path.join(settings["json_folder_path"], settings["current"])
-	dest_folder_path = os.path.join(settings["output_folder_path"], settings["current"])
+	dest_folder_path = os.path.join(settings["output_folder_path"], settings["current"], "images")
 	
 	if not os.path.exists(dest_folder_path):
 		os.makedirs(dest_folder_path)

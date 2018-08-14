@@ -36,16 +36,18 @@ class Render:
 		self._config = config
 				
 				
-		size = (config["image.size"], config["image.size"])
+		size = tuple(config["image.size"])
 		self._image = Image.new("RGB", size, color=tuple(config["image.color"]))
 		self._draw = ImageDraw.Draw(self._image, "RGBA")
 		
 	def _convert_position_to_point(self, p):
-		center = self._config["image.size"]/2
+		scale = self._config["image.scale"]
+		size = self._config["image.size"]
+		center = self._config["image.center"]
 	
 		return (
-			-1 * self._config["image.scale"] * p[0] + center,
-			self._config["image.scale"] * p[1] + center
+			-1 * scale * p[0] + (size[0] - center[0]),
+			scale * p[1] + center[1]
 		)
 		
 	def hyperlanes(self, fill, width):
@@ -71,15 +73,16 @@ class Render:
 			
 		for ring in self._config["voronoi.rings"]:
 			for angle in range(0, 365, ring["s"]):
-				pos = (
+				point = self._convert_position_to_point((
 					ring["x"] + ring["r"] * math.cos(math.radians(angle)),
 					ring["y"] + ring["r"] * math.sin(math.radians(angle))
-				)
+				))
+				
 				
 				if self._config["debug"]:
-					self._draw.point(self._convert_position_to_point(pos), fill=tuple(self._config["debug.color"]))
+					self._draw.point(point, fill=tuple(self._config["debug.color"]))
 				
-				points.append(list(self._convert_position_to_point(pos)))				
+				points.append(list(point))				
 		
 		vor = Voronoi(numpy.array(points))
 		

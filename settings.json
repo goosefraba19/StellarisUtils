@@ -11,12 +11,38 @@
 		"image.center": [600,600],
 		"image.color": [0,0,0],
 		"image.scale": 1,			
+		"hyperlane.fill": [256,256,256,128],
+		"hyperlane.width": 1,
 		"voronoi.rings": [
 			{ "x": 0, "y": 0, "r": 120, "s": 5 },
 			{ "x": 0, "y": 0, "r": 500, "s": 2 },
 			{ "x": -400, "y": -420, "r": 80, "s": 10 }
 		],
+		"pops.outline": [0,0,0],
 		"debug": false,
-		"debug.color": [256,256,256]
+		"debug.color": [256,256,256],
+		"color": {
+			"blue": [0,0,256],
+			"black": [64,64,64],
+			"brown": [193,154,107],
+			"burgundy": [144,0,32],
+			"dark_blue": [128,0,0],
+			"dark_brown": [107,68,35],
+			"dark_green": [0,100,0],
+			"dark_grey": [128,128,128],
+			"dark_purple": [104,40,96],
+			"dark_teal": [0,128,128],
+			"green": [0,128,0],
+			"grey": [192,192,192],
+			"indigo": [64,0,256],
+			"light_blue": [137,207,240],
+			"light_green": [144,238,144],
+			"light_orange": [256,196,128],
+			"orange": [256,128,0],
+			"pink": [256,192,203],
+			"red": [256,0,0],
+			"teal": [0,192,192],
+			"turquoise": [64,224,208]
+		}
 	}
 }

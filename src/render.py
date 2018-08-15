@@ -3,30 +3,6 @@ from PIL import Image, ImageDraw, ImageFont
 from scipy.spatial import Voronoi
 import math, numpy, random
 
-COLOR = {
-    "blue": (0,0,256),
-    "black": (64,64,64),
-    "brown": (193,154,107),
-    "burgundy": (144,0,32),
-    "dark_blue": (128,0,0),
-    "dark_brown": (107,68,35),
-    "dark_green": (0,100,0),
-    "dark_grey": (128,128,128),
-    "dark_purple": (104,40,96),
-    "dark_teal": (0,128,128),
-    "green": (0,128,0),
-    "grey": (192,192,192),
-    "indigo": (64,0,256),
-    "light_blue": (137,207,240),
-    "light_green": (144,238,144),
-    "light_orange": (256,196,128),
-    "orange": (256,128,0),
-    "pink": (256,192,203),
-    "red": (256,0,0),
-    "teal": (0,192,192),
-    "turquoise": (64,224,208),
-}
-
 random.seed(2)
 COUNTRY_OFFSETS = [(random.randint(-40,40), random.randint(-40,40), random.randint(-40,40)) for _ in range(200)]
 
@@ -57,7 +33,11 @@ class Render:
 				if hyperlane.dest not in exclude:
 					a = self._convert_position_to_point(system.pos)
 					b = self._convert_position_to_point(self._model.systems[hyperlane.dest].pos)
-					self._draw.line((a[0],a[1],b[0],b[1]), fill=fill, width=width)
+					self._draw.line(
+						(a[0],a[1],b[0],b[1]), 
+						fill=tuple(self._config["hyperlane.fill"]),
+					 	width=self._config["hyperlane.width"]
+					)
 			exclude.add(system.id)
 			
 	def regions(self):
@@ -96,13 +76,13 @@ class Render:
 		if system.starbase:
 			country = system.starbase.country
 			color = country.flag["colors"][1]
-			if color in COLOR:
+			if color in self._config["color"]:
 				offset = (0,0,0)
 				try:
 					offset = COUNTRY_OFFSETS[int(country.id)]					
 				except IndexError:
 					offset = (0,0,0)
-				return tuple([a+b-30 for (a,b) in zip(COLOR[color], offset)])
+				return tuple([a+b-30 for (a,b) in zip(self._config["color"][color], offset)])
 			else:
 				print("WARNING: Missing color '" + color + "'")				
 				return (256, 256, 256)
@@ -134,8 +114,11 @@ class Render:
 
 				p = self._convert_position_to_point(system.pos)
 				r = int(2 * math.sqrt(pops / math.pi) + 0.5)
-				self._draw.ellipse((p[0]-r,p[1]-r,p[0]+r, p[1]+r), fill=color, outline=(0,0,0))
-
+				self._draw.ellipse(
+					(p[0]-r,p[1]-r,p[0]+r, p[1]+r), 
+					fill=color,
+					outline=tuple(self._config["pops.outline"])
+				)
 	
 	def export(self, path):
 		self._image.save(path)

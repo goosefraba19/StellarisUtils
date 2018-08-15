@@ -1,5 +1,6 @@
-import json, os
+import json, os, time
 
+from src.model import Model
 from src.render import Render
 
 def get_settings():
@@ -20,22 +21,30 @@ def get_pairs(settings):
 		dest = os.path.join(dest_folder_path, os.path.splitext(name)[0] + ".png")
 		
 		if not os.path.exists(dest):
-			results.append((src, dest))
+			results.append((name, src, dest))
 	
 	return results
 
 def main():
 	settings = get_settings()
 		
-	for (src, dest) in get_pairs(settings):						
-		render = Render(src, settings["draw"])
+	for (name, src_path, dest_path) in get_pairs(settings):						
+
+		t_start = time.time()
+		model = Model.from_jsonzip(src_path)
+		t_model = time.time()
+		render = Render(model, settings["draw"])
 		
 		render.regions()
 		render.hyperlanes((256,256,256,128), 1)
 		render.pops()
 		
-		render.export(dest)
-		print(dest)
+		render.export(dest_path)
+		t_end = time.time()
+
+		t_parse_ms = int(1000*(t_model - t_start))
+		t_render_ms = int(1000*(t_end - t_model))
+		print(name + " (parse: " + str(t_parse_ms) + ", render: " + str(t_render_ms) + ")")
 	
 
 if __name__=="__main__":

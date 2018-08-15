@@ -1,5 +1,6 @@
-import json, os
+import json, os, time
 
+from src.model import Model
 from src.render import Render
 
 def get_settings():
@@ -21,14 +22,26 @@ def get_dest_path(settings):
 
 def main():
 	settings = get_settings()
-		
-	render = Render(get_src_path(settings), settings["draw"])
+
+	src_path = get_src_path(settings)
+	dest_path = get_dest_path(settings)
+
+	t_start = time.time()
+	model = Model.from_jsonzip(src_path)
+	t_model = time.time()
+	render = Render(model, settings["draw"])
 	
 	render.regions()
 	render.hyperlanes((256,256,256,128), 1)
 	render.pops()
 	
-	render.export(get_dest_path(settings))
+	render.export(dest_path)
+	t_end = time.time()
+
+	t_parse_ms = int(1000*(t_model - t_start))
+	t_render_ms = int(1000*(t_end - t_model))
+	print("parse: " + str(t_parse_ms))
+	print("render: " + str(t_render_ms))
 	
 
 if __name__=="__main__":

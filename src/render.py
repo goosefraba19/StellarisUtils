@@ -31,8 +31,8 @@ random.seed(2)
 COUNTRY_OFFSETS = [(random.randint(-40,40), random.randint(-40,40), random.randint(-40,40)) for _ in range(200)]
 
 class Render:
-	def __init__(self, path, config):
-		self._model = Model(path)
+	def __init__(self, model, config):
+		self._model = model
 		self._config = config
 				
 				

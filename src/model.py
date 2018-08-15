@@ -1,4 +1,5 @@
-import json
+import json, zipfile
+from .parse import Parser
 
 class Hyperlane:
     def __init__(self, src, dest, length):
@@ -112,71 +113,87 @@ class Species:
 
 
 class Model:
-    def __init__(self, path):
-        with open(path, "r") as file:
-            all_data = json.load(file)
 
-            # create countries
-            self.countries = dict([(k, Country(k,v)) for k,v in all_data["country"].items() if v != "none"])
-
-            # create systems
-            self.systems = dict([(k, System(k,v)) for k,v in all_data["galactic_object"].items()])
+    @staticmethod
+    def from_savefile(path):
+        parser = Parser()
         
-            # create starbases
-            self.starbases = dict([(k, Starbase(k,v)) for k,v in all_data["starbases"].items() if v != "none"])
+        archive = zipfile.ZipFile(path)
+        with archive.open("gamestate") as file:
+            data = file.read().decode("utf-8")
+            parser.input(data)
 
-            # link systems and starbases
-            for system in self.systems.values():
-                if system.starbase_id != None and system.starbase_id in self.starbases:
-                    starbase = self.starbases[system.starbase_id]
-                    system.starbase = starbase
-                    starbase.system = system
-                del system.starbase_id
+        obj = parser.parse()
+        return Model(obj)
 
-            # link countries and starbases
-            for country in self.countries.values():
-                country.starbases = []
-            for starbase in self.starbases.values():
-                country = self.countries[starbase.country_id]
-                country.starbases.append(starbase)
-                starbase.country = country
-                del starbase.country_id
+    @staticmethod
+    def from_jsonzip(path):
+        archive = zipfile.ZipFile(path)
+        with archive.open("gamestate.json") as file:
+            return Model(json.load(file))
 
-            # create planets
-            self.planets = dict([(k, Planet(k,v)) for k,v in all_data["planet"].items() if v != "none"])
+    def __init__(self, obj):
+        # create countries
+        self.countries = dict([(k, Country(k,v)) for k,v in obj["country"].items() if v != "none"])
 
-            # link systems and planets
-            for system in self.systems.values():
-                system.planets = [self.planets[x] for x in system.planet_ids]
-                for planet in system.planets:
-                    planet.system = system
-                del system.planet_ids
+        # create systems
+        self.systems = dict([(k, System(k,v)) for k,v in obj["galactic_object"].items()])
+    
+        # create starbases
+        self.starbases = dict([(k, Starbase(k,v)) for k,v in obj["starbases"].items() if v != "none"])
 
-            # link countries and planets
-            for country in self.countries.values():
-                country.planets = [self.planets[x] for x in country.planet_ids]
-                for planet in country.planets:
-                    planet.country = country
-                del country.planet_ids
+        # link systems and starbases
+        for system in self.systems.values():
+            if system.starbase_id != None and system.starbase_id in self.starbases:
+                starbase = self.starbases[system.starbase_id]
+                system.starbase = starbase
+                starbase.system = system
+            del system.starbase_id
 
-            # create pops
-            self.pops = dict([(k, Pop(k,v)) for k,v in all_data["pop"].items() if v != "none"])
+        # link countries and starbases
+        for country in self.countries.values():
+            country.starbases = []
+        for starbase in self.starbases.values():
+            country = self.countries[starbase.country_id]
+            country.starbases.append(starbase)
+            starbase.country = country
+            del starbase.country_id
 
-            # link planets and pops
-            for planet in self.planets.values():
-                planet.pops = [self.pops[x] for x in planet.pop_ids]
-                for pop in planet.pops:
-                    pop.planet = planet
-                del planet.pop_ids
+        # create planets
+        self.planets = dict([(k, Planet(k,v)) for k,v in obj["planet"].items() if v != "none"])
 
-            # create species
-            self.species = dict([(str(i), Species(str(i), v)) for (i,v) in enumerate(all_data["species"])])
+        # link systems and planets
+        for system in self.systems.values():
+            system.planets = [self.planets[x] for x in system.planet_ids]
+            for planet in system.planets:
+                planet.system = system
+            del system.planet_ids
 
-            # link species and pops
-            for species in self.species.values():
-                species.pops = []
-            for pop in self.pops.values():
-                species = self.species[pop.species_id]
-                species.pops.append(pop)
-                pop.species = species
-                del pop.species_id
+        # link countries and planets
+        for country in self.countries.values():
+            country.planets = [self.planets[x] for x in country.planet_ids]
+            for planet in country.planets:
+                planet.country = country
+            del country.planet_ids
+
+        # create pops
+        self.pops = dict([(k, Pop(k,v)) for k,v in obj["pop"].items() if v != "none"])
+
+        # link planets and pops
+        for planet in self.planets.values():
+            planet.pops = [self.pops[x] for x in planet.pop_ids]
+            for pop in planet.pops:
+                pop.planet = planet
+            del planet.pop_ids
+
+        # create species
+        self.species = dict([(str(i), Species(str(i), v)) for (i,v) in enumerate(obj["species"])])
+
+        # link species and pops
+        for species in self.species.values():
+            species.pops = []
+        for pop in self.pops.values():
+            species = self.species[pop.species_id]
+            species.pops.append(pop)
+            pop.species = species
+            del pop.species_id

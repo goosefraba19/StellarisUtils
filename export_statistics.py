@@ -18,7 +18,7 @@ def main():
 	json_paths = [os.path.join(folder_path, p) for p in os.listdir(folder_path)]
 	for path in sorted(json_paths):
 		print(path)
-		model = Model(path)
+		model = Model.from_jsonzip(path)
 		for stat in stats:
 			stat.step(model)
 

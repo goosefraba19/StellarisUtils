@@ -23,10 +23,19 @@ def copy_new_autosaves(src_path, dest_path):
 			print(dest)
 		
 def main():
+
 	settings = get_settings()
 
 	src_folder_path = os.path.join(settings["stellaris_folder_path"], "save games")
 	dest_folder_path = settings["saves_folder_path"]
+	interval = 60
+
+	print("copy_autosave_files.py")
+	print("----------------------")
+	print("Watching " + src_folder_path)
+	print("Copying to " + dest_folder_path)
+	print("Checking every " + str(interval) + " seconds")
+	print("")
 	
 	if not os.path.exists(dest_folder_path):
 		os.mkdir(dest_folder_path)
@@ -36,7 +45,7 @@ def main():
 	while True:
 		for pair in pairs:
 			copy_new_autosaves(*pair)
-		time.sleep(60)
+		time.sleep(interval)
 	
 	
 if __name__=="__main__":

@@ -13,14 +13,13 @@ class Lexer:
     def token(self):
         while True:
 
-            # eof
-            if self._length <= self._index:
+            try:
+                c = self._data[self._index]
+            except IndexError:
                 return ("eof", None)
 
-            c = self._data[self._index]
-
             # whitespace (skip)
-            if c in " \t\n":
+            if c in "\t\n ":
                 self._index += 1
                 continue
 
@@ -32,15 +31,14 @@ class Lexer:
             # text
             match = self._pattern_text.match(self._data, self._index)
             if match:
-                value = match.group(0)
-                self._index += len(value)
-                return ("text", value)
+                self._index = match.end()
+                return ("text", match[0])
 
             # escaped text
             match = self._pattern_escaped_text.match(self._data, self._index)
             if match:
-                self._index += len(match.group(0))
-                return ("text", match.group(1))
+                self._index = match.end()
+                return ("text", match[1])
 
             raise Exception("could find matching token")
 
@@ -71,15 +69,13 @@ class Parser:
                     self._token = self._lexer.token()
                     return (key_or_value, value)
                 elif self._token[0] == "{":
-                    value = self._parse_object()
-                    return (key_or_value, value)
+                    return (key_or_value, self._parse_object())
                 else:
                     raise Exception()    
             else:
                 return (None, key_or_value)
         elif self._token[0] == "{":
-            value = self._parse_object()
-            return (None, value)
+            return (None, self._parse_object())
 
     def _parse_object(self):
         self._token = self._lexer.token()
@@ -90,6 +86,10 @@ class Parser:
         return self._convert_pairs(pairs)
 
     def _convert_pairs(self, pairs):
+
+        if len(pairs) == 0:
+            return pairs
+
         groups = {}
         is_list = True
         for (key, value) in pairs:
@@ -108,6 +108,3 @@ class Parser:
                 if len(groups[key]) == 1:
                     groups[key] = groups[key][0]
             return groups
-
-
-

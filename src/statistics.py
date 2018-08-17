@@ -44,7 +44,12 @@ class CountryCounts:
 
         for planet in country.owned_planets:
             for pop in planet.pops:
-                species_pops[pop.species.name] += 1
+
+                species = pop.species
+                if species.parent != None:
+                    species = species.parent
+                species_pops[species.name] += 1
+
                 if pop.ethic:
                     ethic_pops[pop.ethic] += 1
 
@@ -74,8 +79,12 @@ class CountryCounts:
 
 
 class SpeciesCounts:
-    def __init__(self, id, name):
-        self._id = id
+    def __init__(self, ids, name):
+        if type(ids) is not list:
+            self._ids = [ids]
+        else:
+            self._ids = ids
+
         self._name = name
         self._country_pops = []
 
@@ -83,7 +92,7 @@ class SpeciesCounts:
         country_pops = Counter()
 
         for pop in model.pops.values():
-            if pop.species.id == self._id:
+            if pop.species.id in self._ids:
                 if pop.planet.owner != None:
                     country_pops[pop.planet.owner.name] += 1
                 else:
@@ -110,7 +119,12 @@ class GalaxyCounts:
         scores = Counter()
 
         for pop in model.pops.values():
-            species_pops[pop.species.name] += 1
+
+            species = pop.species
+            if species.parent != None:
+                species = species.parent
+            species_pops[species.name] += 1
+
             if pop.planet != None and pop.planet.owner != None:
                 country_pops[pop.planet.owner.name] += 1
             else:

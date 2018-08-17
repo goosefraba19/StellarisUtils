@@ -12,6 +12,15 @@ from .system import System
 class Model:
 
     @staticmethod
+    def from_file(path):
+        if path.endswith(".sav"):
+            return Model.from_savefile(path)
+        elif path.endswith(".zip"):
+            return Model.from_jsonzip(path)
+        else:
+            raise Exception("unrecognized file type")
+
+    @staticmethod
     def from_savefile(path):
         parser = Parser()
         
@@ -97,6 +106,18 @@ class Model:
 
         # create species
         self.species = dict([(str(i), Species(str(i), v)) for (i,v) in enumerate(obj["species"])])
+
+        # link species to each other
+        for species in self.species.values():
+            species.children = []
+        for species in self.species.values():
+            if species.parent_id:
+                parent = self.species[species.parent_id]
+                species.parent = parent
+                parent.children.append(species)
+            else:
+                species.parent = None
+            del species.parent_id
 
         # link species and pops
         for species in self.species.values():

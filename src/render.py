@@ -4,7 +4,7 @@ from scipy.spatial import Voronoi
 import math, numpy, random
 
 random.seed(2)
-COUNTRY_OFFSETS = [(random.randint(-40,40), random.randint(-40,40), random.randint(-40,40)) for _ in range(200)]
+COUNTRY_OFFSETS = [(random.randint(-40,40), random.randint(-40,40), random.randint(-40,40)) for _ in range(500)]
 
 class Render:
 	def __init__(self, model, config):
@@ -74,12 +74,12 @@ class Render:
 				
 	def _get_system_color(self, system):
 		if system.starbase:
-			country = system.starbase.country
-			color = country.flag["colors"][1]
+			owner = system.starbase.owner
+			color = owner.flag["colors"][1]
 			if color in self._config["color"]:
 				offset = (0,0,0)
 				try:
-					offset = COUNTRY_OFFSETS[int(country.id)]					
+					offset = COUNTRY_OFFSETS[int(owner.id)]					
 				except IndexError:
 					offset = (0,0,0)
 				return tuple([a+b-30 for (a,b) in zip(self._config["color"][color], offset)])

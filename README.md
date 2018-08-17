@@ -18,19 +18,34 @@ The process I've developed for making timelapses consists of four steps: acquiri
 
 ##### copy_autosave_files.py
 
-![](https://i.imgur.com/l20OYKm.png)
+![](https://i.imgur.com/OJYazdU.png)
 
-This script is run in the background while you are playing Stellaris and periodically checks the entire "save games" folder for new autosave files. It then copies those new files into the saves folder for the project.
+This script is run in the background while you are playing Stellaris and periodically checks the entire "save games" folder for new autosave files. It then copies those new files into the saves folder for the project. 
 
 There are some values in **settings.json** that you need to verify in order for this script to work. 
  * "stellaris_folder_path" must point to the folder where Stellaris stores all your current data, which contains these folders and files:
 
-![](https://i.imgur.com/Nm5czvU.png)
+![](https://i.imgur.com/foimXIN.png)
 
  * "saves_folder_path" is the folder where all the copied savefiles will end up. You can leave this with the default value.
 
 #### 2. Converting Savefiles
 
+##### convert_saves_to_json.py
+
+![](https://i.imgur.com/GdfS85y.png)
+
+This script converts the savefiles for a specific game from their native format into a zipped JSON file. This is done to speed up the later steps, since Python's JSON parser is much quicker than my own savefile parser. When run, the script ignores savefiles that have already been converted.
+
+**NOTE**: This step will probably take a long time to complete!
+
+The key values in **settings.json** that you should verify are:
+
+* "current" is the name of the subfolder on which the script will operate. The script will look for new savefiles in "&lt;saves_folder_path&gt;/&lt;current&gt;" and place the converted files in "&lt;json_folder_path&gt;/&lt;current&gt;".
+
+* "saves_folder_path" should still be the folder where all the copied savefiles ended up from the previous step.
+
+* "json_folder_path" is the folder where the converted files will end up. You can leave this with the default value.
 
 
 #### 3. Generating Images
@@ -40,5 +55,4 @@ There are some values in **settings.json** that you need to verify in order for 
 #### 4. Generating Animation
 
 I use [GIMP](https://www.gimp.org/) to generate the animations, by loading all the images into the same project as separate layers and then exporting them as a GIF.
-
 

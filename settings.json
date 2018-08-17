@@ -4,7 +4,7 @@
 	"json_folder_path": ".\\json",
 	"output_folder_path": ".\\output",
 	
-	"current": "mpdemocraticgekkotarepublic_-433043792",
+	"current": "mpvaranimartialrepublic2_-930391239",
 	
 	"draw": {
 		"image.size": [1200,1200],			
@@ -42,7 +42,8 @@
 			"pink": [256,192,203],
 			"red": [256,0,0],
 			"teal": [0,192,192],
-			"turquoise": [64,224,208]
+			"turquoise": [64,224,208],
+			"yellow": [256, 256, 0]
 		}
 	}
 }

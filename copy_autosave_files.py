@@ -30,8 +30,6 @@ def main():
 	dest_folder_path = settings["saves_folder_path"]
 	interval = 60
 
-	print("copy_autosave_files.py")
-	print("----------------------")
 	print("Watching " + src_folder_path)
 	print("Copying to " + dest_folder_path)
 	print("Checking every " + str(interval) + " seconds")

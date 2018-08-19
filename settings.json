@@ -4,24 +4,41 @@
 	"json_folder_path": ".\\json",
 	"output_folder_path": ".\\output",
 	
-	"current": "mpdemocraticgekkotarepublic_-433043792",
+	"current": "primesequence_-499848856",
 	
-	"draw": {
-		"image.size": [1200,1200],			
-		"image.center": [600,600],
-		"image.color": [0,0,0],
-		"image.scale": 1,			
-		"hyperlane.fill": [256,256,256,128],
-		"hyperlane.width": 1,
-		"voronoi.rings": [
-			{ "x": 0, "y": 0, "r": 120, "s": 5 },
-			{ "x": 0, "y": 0, "r": 500, "s": 2 },
-			{ "x": -400, "y": -420, "r": 80, "s": 10 }
-		],
-		"pops.outline": [0,0,0],
-		"text.color": [256,256,256],
-		"debug": false,
-		"debug.color": [256,256,256],
+	"render": {
+		"image": {
+			"size": [600,600],
+			"center": [300,300],
+			"color": [0,0,0],
+			"scale": 1
+		},
+		"steps": [			
+			{ 
+				"key": "regions",
+				"voronoi.rings": [
+					{ "x": 0, "y": 0, "r": 40, "s": 5 },
+					{ "x": 0, "y": 0, "r": 280, "s": 2 }
+				],
+				"debug": false,
+				"debug.color": [256,256,256]
+			},
+			{
+				"key": "hyperlanes",
+				"fill": [256,256,256,128],
+				"width": 1
+			},
+			{
+				"key": "pops",
+				"outline": [0,0,0]
+			},
+			{
+				"key": "text",
+				"pos": [10,10],
+				"text": "{date}",
+				"fill": [256,256,256]
+			}
+		],		
 		"color": {
 			"blue": [0,0,256],
 			"black": [86,86,86],

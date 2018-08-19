@@ -29,13 +29,8 @@ def main():
 	t_start = time.time()
 	model = Model.from_jsonzip(src_path)
 	t_model = time.time()
-	render = Render(model, settings["draw"])
-
-	render.regions()
-	render.hyperlanes((256,256,256,128), 1)
-	render.pops()
-	render.text((10,10), model.date)
-
+	render = Render(model, settings["render"])
+	render.steps()
 	render.export(dest_path)
 	t_end = time.time()
 

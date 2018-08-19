@@ -10,23 +10,31 @@ class Render:
 	def __init__(self, model, config):
 		self._model = model
 		self._config = config
-				
-				
-		size = tuple(config["image.size"])
-		self._image = Image.new("RGB", size, color=tuple(config["image.color"]))
+		self._image = Image.new("RGB", tuple(config["image"]["size"]), color=tuple(config["image"]["color"]))
 		self._draw = ImageDraw.Draw(self._image, "RGBA")
+
+	def steps(self):
+		for step in self._config["steps"]:
+			if step["key"] == "regions":
+				self.regions(step)
+			elif step["key"] == "hyperlanes":
+				self.hyperlanes(step)
+			elif step["key"] == "pops":
+				self.pops(step)
+			elif step["key"] == "text":
+				self.text(step)
 		
 	def _convert_position_to_point(self, p):
-		scale = self._config["image.scale"]
-		size = self._config["image.size"]
-		center = self._config["image.center"]
+		scale = self._config["image"]["scale"]
+		size = self._config["image"]["size"]
+		center = self._config["image"]["center"]
 	
 		return (
 			-1 * scale * p[0] + (size[0] - center[0]),
 			scale * p[1] + center[1]
 		)
 		
-	def hyperlanes(self, fill, width):
+	def hyperlanes(self, config):
 		exclude = set()
 		for system in self._model.systems.values():
 			for hyperlane in system.hyperlanes:
@@ -35,12 +43,12 @@ class Render:
 					b = self._convert_position_to_point(self._model.systems[hyperlane.dest].pos)
 					self._draw.line(
 						(a[0],a[1],b[0],b[1]), 
-						fill=tuple(self._config["hyperlane.fill"]),
-					 	width=self._config["hyperlane.width"]
+						fill=tuple(config["fill"]),
+					 	width=config["width"]
 					)
 			exclude.add(system.id)
 			
-	def regions(self):
+	def regions(self, config):
 		points = []
 		voronoi_index = {}
 		
@@ -51,16 +59,15 @@ class Render:
 			points.append(list(point))			
 			index += 1
 			
-		for ring in self._config["voronoi.rings"]:
+		for ring in config["voronoi.rings"]:
 			for angle in range(0, 365, ring["s"]):
 				point = self._convert_position_to_point((
 					ring["x"] + ring["r"] * math.cos(math.radians(angle)),
 					ring["y"] + ring["r"] * math.sin(math.radians(angle))
 				))
 				
-				
-				if self._config["debug"]:
-					self._draw.point(point, fill=tuple(self._config["debug.color"]))
+				if config["debug"]:
+					self._draw.point(point, fill=tuple(config["debug.color"]))
 				
 				points.append(list(point))				
 		
@@ -101,7 +108,7 @@ class Render:
 		if points:
 			self._draw.polygon(points, fill=fill, outline=outline)
 			
-	def pops(self):
+	def pops(self, config):
 		for system in self._model.systems.values():
 			pops = sum([len(planet.pops) for planet in system.planets])
 			if pops != 0:
@@ -117,13 +124,19 @@ class Render:
 				self._draw.ellipse(
 					(p[0]-r,p[1]-r,p[0]+r, p[1]+r), 
 					fill=color,
-					outline=tuple(self._config["pops.outline"])
+					outline=tuple(config["outline"])
 				)
 	
-	def text(self, p, text, fill=None):
-		if not fill:
-			fill = tuple(self._config["text.color"])
-		self._draw.text(p, text, fill=fill)
+	def text(self, config):
+
+		text = config["text"] \
+			.replace("{date}", self._model.date)
+
+		self._draw.text(
+			tuple(config["pos"]),
+			text, 
+			fill=tuple(config["fill"])
+		)
 
 	def export(self, path):
 		self._image.save(path)

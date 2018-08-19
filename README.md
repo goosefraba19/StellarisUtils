@@ -14,7 +14,7 @@ Make sure that Python 3.7 is installed, along with these packages:
 
 The process I've developed for making timelapses consists of four steps: acquiring the savefiles, converting them, generating the images, and then generating an animation.
 
-#### 1. Acquiring Savefiles
+### 1. Acquiring Savefiles
 
 ##### copy_autosave_files.py
 
@@ -29,7 +29,7 @@ There are some values in **settings.json** that you need to verify in order for 
 
  * "saves_folder_path" is the folder where all the copied savefiles will end up. You can leave this with the default value.
 
-#### 2. Converting Savefiles
+### 2. Converting Savefiles
 
 ##### convert_saves_to_json.py
 
@@ -48,11 +48,10 @@ The key values in **settings.json** that you should verify are:
 * "json_folder_path" is the folder where the converted files will end up. You can leave this with the default value.
 
 
-#### 3. Generating Images
+### 3. Generating Images
 
+TODO
 
-
-#### 4. Generating Animation
+### 4. Generating Animation
 
 I use [GIMP](https://www.gimp.org/) to generate the animations, by loading all the images into the same project as separate layers and then exporting them as a GIF.
-

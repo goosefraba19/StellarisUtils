@@ -38,6 +38,7 @@ def main():
 		render.regions()
 		render.hyperlanes((256,256,256,128), 1)
 		render.pops()
+		render.text((10,10), model.date)
 		
 		render.export(dest_path)
 		t_end = time.time()

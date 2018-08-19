@@ -28,7 +28,7 @@ def main():
 
 	src_folder_path = os.path.join(settings["stellaris_folder_path"], "save games")
 	dest_folder_path = settings["saves_folder_path"]
-	interval = 60
+	interval = 10
 
 	print("Watching " + src_folder_path)
 	print("Copying to " + dest_folder_path)

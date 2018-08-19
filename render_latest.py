@@ -30,11 +30,12 @@ def main():
 	model = Model.from_jsonzip(src_path)
 	t_model = time.time()
 	render = Render(model, settings["draw"])
-	
+
 	render.regions()
 	render.hyperlanes((256,256,256,128), 1)
 	render.pops()
-	
+	render.text((10,10), model.date)
+
 	render.export(dest_path)
 	t_end = time.time()
 
@@ -42,7 +43,6 @@ def main():
 	t_render_ms = int(1000*(t_end - t_model))
 	print("parse: " + str(t_parse_ms))
 	print("render: " + str(t_render_ms))
-	
 
 if __name__=="__main__":
 	main()

@@ -120,6 +120,11 @@ class Render:
 					outline=tuple(self._config["pops.outline"])
 				)
 	
+	def text(self, p, text, fill=None):
+		if not fill:
+			fill = tuple(self._config["text.color"])
+		self._draw.text(p, text, fill=fill)
+
 	def export(self, path):
 		self._image.save(path)
 	

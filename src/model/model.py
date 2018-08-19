@@ -39,6 +39,9 @@ class Model:
             return Model(json.load(file))
 
     def __init__(self, obj):
+
+        self.date = obj["date"]
+
         # create countries
         self.countries = dict([(k, Country(k,v)) for k,v in obj["country"].items() if v != "none"])
 

@@ -12,7 +12,7 @@ Make sure that Python 3.7 is installed, along with these packages:
 
 ## How to Make Timelapses
 
-The process I've developed for making timelapses consists of four steps: acquiring the savefiles, converting them, generating the images, and then generating an animation.
+The process I've developed for making timelapses consists of four steps: acquiring the savefiles, converting them, rendering the images, and then generating an animation.
 
 ### 1. Acquiring Savefiles
 
@@ -48,9 +48,47 @@ The key values in **settings.json** that you should verify are:
 * "json_folder_path" is the folder where the converted files will end up. You can leave this with the default value.
 
 
-### 3. Generating Images
+### 3. Rendering Images
 
-TODO
+**render_latest.py** & **render_all.py**
+
+There are two scripts for rendering images. Use **render_latest.py** to evaluate the current settings and adjust accordingly, and once you're happy run **render_all.py**. All the images are saved in the output folder.
+
+The key values in **settings.json** that you should focus on are:
+
+* "current" should still be the same from the previous step.
+
+* "output_folder_path" is where all the rendered images are saved. You can leave this with the default value.
+
+* "render" holds all the details used to produce the images.
+
+**settings.json: "render"**
+
+While working with **render_latest.py**, expect to modify the "render" section multiple times before finding the correct settings. Adjust the "image" subsection's "size", "center", and "scale" values so that the galaxy fits nicely inside the image. If the script is reporting missing colors, add them to the "color" subsection and feel free to let me know they're missing. 
+
+The "steps" subsection describes the rendering steps. The default settings renders regions, hyperlanes, pops, and then the date in the upper-left corner. Each step also contains settings controlling how they operate.
+
+The regions step will most likely need adjustment before you render all the images. It uses a Voronoi diagram to determine the zone around a system, and this works well for almost all of the systems. However, it doesn't work well for systems on the outer rim, inner rim, and in the L-cluster.
+
+![](https://i.imgur.com/hdOVHXq.png)
+
+To fix this issue, I've added some rings marking the boundaries in the "voronoi_rings" list in the regions step settings. However, these boundaries might not work so well for your savefile. 
+
+First, set the "debug" setting to true, and then points will be included in the image for each ring specified. You'll want three rings: one along the inner rim, one along the outer rim, and one surrounding the L-cluster. 
+
+Each ring consists of 4 values: 
+ 
+* x - horizontal position
+* y - vertical position
+* r - radius of the ring
+* s - (step) the angle between each point generated
+
+The final result should look something like this:
+
+![](https://i.imgur.com/LkDvaAR.png)
+
+Set "debug" to false to get rid of the ring points, and then go ahead and run **render_all.py** to generate an image for every converted savefile in the current game's json folder.
+
 
 ### 4. Generating Animation
 

@@ -4,24 +4,25 @@
 	"json_folder_path": ".\\json",
 	"output_folder_path": ".\\output",
 	
-	"current": "primesequence_-499848856",
+	"current": "mpdemocraticgekkotarepublic_-433043792",
 	
 	"render": {
 		"image": {
-			"size": [600,600],
-			"center": [300,300],
+			"size": [1200,1200],
+			"center": [600,600],
 			"color": [0,0,0],
 			"scale": 1
 		},
 		"steps": [			
 			{ 
 				"key": "regions",
-				"voronoi.rings": [
-					{ "x": 0, "y": 0, "r": 40, "s": 5 },
-					{ "x": 0, "y": 0, "r": 280, "s": 2 }
+				"voronoi_rings": [
+					{ "x": 0, "y": 0, "r": 100, "s": 5 },
+					{ "x": 0, "y": 0, "r": 480, "s": 2 },
+					{ "x": -400, "y": -420, "r": 80, "s": 15 }
 				],
 				"debug": false,
-				"debug.color": [256,256,256]
+				"debug_color": [256,256,256]
 			},
 			{
 				"key": "hyperlanes",

@@ -59,7 +59,7 @@ class Render:
 			points.append(list(point))			
 			index += 1
 			
-		for ring in config["voronoi.rings"]:
+		for ring in config["voronoi_rings"]:
 			for angle in range(0, 365, ring["s"]):
 				point = self._convert_position_to_point((
 					ring["x"] + ring["r"] * math.cos(math.radians(angle)),
@@ -67,7 +67,7 @@ class Render:
 				))
 				
 				if config["debug"]:
-					self._draw.point(point, fill=tuple(config["debug.color"]))
+					self._draw.point(point, fill=tuple(config["debug_color"]))
 				
 				points.append(list(point))				
 		

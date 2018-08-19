@@ -2,7 +2,7 @@ import math, numpy, random
 from scipy.spatial import Voronoi
 
 from ..render import RenderStep
-from .utils import get_system_color
+from .utils import convert_position_to_point, get_system_color
 
 class RegionsStep(RenderStep):
 	def __init__(self):
@@ -14,14 +14,14 @@ class RegionsStep(RenderStep):
 		
 		index = 0
 		for system in ctx.model.systems.values():
-			point = ctx.convert_position_to_point(system.pos)
+			point = convert_position_to_point(ctx, system.pos)
 			voronoi_index[system.id] = index
 			points.append(list(point))			
 			index += 1
 			
 		for ring in config["voronoi_rings"]:
 			for angle in range(0, 365, ring["s"]):
-				point = ctx.convert_position_to_point((
+				point = convert_position_to_point(ctx, (
 					ring["x"] + ring["r"] * math.cos(math.radians(angle)),
 					ring["y"] + ring["r"] * math.sin(math.radians(angle))
 				))

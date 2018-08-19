@@ -1,7 +1,7 @@
 import math
 
 from ..render import RenderStep
-from .utils import get_system_color
+from .utils import convert_position_to_point, get_system_color
 
 class PopsStep(RenderStep):
 	def __init__(self):
@@ -18,10 +18,11 @@ class PopsStep(RenderStep):
 				else:
 					color = (255,255,255)
 
-				p = ctx.convert_position_to_point(system.pos)
+				p = convert_position_to_point(ctx, system.pos)
 				r = int(2 * math.sqrt(pops / math.pi) + 0.5)
 				ctx.draw.ellipse(
 					(p[0]-r,p[1]-r,p[0]+r, p[1]+r), 
 					fill=color,
 					outline=tuple(config["outline"])
 				)
+				

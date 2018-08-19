@@ -17,12 +17,7 @@ class Render:
 			self._step_handlers[i.name] = i
 
 	def steps(self):
-		ctx = RenderContext(
-			self._config,
-			self._model,
-			self._draw,
-			self._convert_position_to_point
-		)
+		ctx = RenderContext(self._config, self._model, self._draw)
 
 		for step in self._config["steps"]:
 			key = step["key"]
@@ -30,16 +25,6 @@ class Render:
 				self._step_handlers[key].run(ctx, step)
 			else:
 				print(f"Error: unrecognized step '{key}'.")
-	
-	def _convert_position_to_point(self, p):
-		scale = self._config["image"]["scale"]
-		size = self._config["image"]["size"]
-		center = self._config["image"]["center"]
-	
-		return (
-			-1 * scale * p[0] + (size[0] - center[0]),
-			scale * p[1] + center[1]
-		)
 	
 	def export(self, path):
 		self._image.save(path)
@@ -51,8 +36,7 @@ class RenderStep:
 		pass
 	
 class RenderContext:
-	def __init__(self, config, model, draw, convert_func):
+	def __init__(self, config, model, draw):
 		self.config = config
 		self.model = model
 		self.draw = draw
-		self.convert_position_to_point = convert_func

@@ -14,8 +14,9 @@ class Pop:
 
         self.planet = None
         self.species = None
+        self.faction = None
 
-        self.species_id = value["species_index"]
+        self.species_index = int(value["species_index"])
 
     def __str__(self):
         return f"Pop({self.id})"

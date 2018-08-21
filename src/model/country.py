@@ -22,8 +22,14 @@ class Country:
         self.owned_planets = None
         self.controlled_planets = None
         self.starbases = None
+        self.factions = None
+        self.leaders = None
+        self.ruler = None
 
-
+        if "ruler" in value:
+            self.ruler_id = value["ruler"]
+        else:
+            self.ruler_id = None
 
     def __str__(self):
         return f"Country({self.id},name={self.name})"

@@ -19,18 +19,17 @@ def main():
         model = Model.from_jsonzip(path)
 
         for species in model.species.values():
-            if species.id not in all_species:
-                all_species[species.id] = species
+            all_species[species.id] = species
 
     print()
 
-    parents = [s for s in all_species.values() if s.parent == None]
-    for parent in sorted(parents, key=lambda s: int(s.id)):
-        print(f"{parent.id}: {parent.name}")
+    print("base,id,name")
+    bases = [s for s in all_species.values() if s.base == None]
+    for base in sorted(bases, key=lambda s: s.id):
+        print(f"{base.id},{base.id},{base.name}")
 
-        children = [s for s in all_species.values() if s.parent != None and s.parent.id == parent.id]
-        for child in sorted(children, key=lambda s: int(s.id)):
-            print(f"  {child.id}: {child.name}")
+        for child in base.children:
+            print(f"{base.id},{child.id},{child.name}")
 
 
 if __name__=="__main__":

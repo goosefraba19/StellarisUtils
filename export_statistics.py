@@ -15,12 +15,12 @@ def main():
 		GalaxyCounts(),		
 		CountryCounts("0", "country_gekkota"),
 		CountryCounts("1", "country_devils"),
-		SpeciesCounts(["0", "88", "116"], "species_gekkota"),
-		SpeciesCounts(["1", "62", "66", "78", "90" ,"115", "120"], "species_gnome"),
-		SpeciesCounts(["2", "93", "95", "96"], "species_prossnakan"),
-		SpeciesCounts(["4", "79", "83", "86", "87", "89", "97", "100", "104", "105", "107", "109", "118"], "species_fafossan"),
-		SpeciesCounts(["21", "113", "117"], "species_belmacossa"),
-		SpeciesCounts(["3", "129"], "species_hahnmur")
+		SpeciesCounts(["914a42131321444cfdb5a4e768c1ca0c"], "species_gekkota", include_children=True),
+		SpeciesCounts(["6d1e40b260b879b009cce7bf2f42fda5"], "species_gnome", include_children=True),
+		SpeciesCounts(["8d9c2b498082675d7cc7025630263176"], "species_prossnakan", include_children=True),
+		SpeciesCounts(["c19c2f352dbb54b80ef8ca465898c965"], "species_fafossan", include_children=True),
+		SpeciesCounts(["d96ca9ad300d225d02f52f7a4a753059"], "species_belmacossa", include_children=True),
+		SpeciesCounts(["966875c49a50703e480bd7d5543c0809"], "species_hahnmur", include_children=True)
 	]
 
 	json_paths = [os.path.join(folder_path, p) for p in os.listdir(folder_path)]

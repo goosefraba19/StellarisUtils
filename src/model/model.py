@@ -3,6 +3,8 @@ import json, zipfile
 from ..parse import Parser
 
 from .country import Country
+from .faction import Faction
+from .leader import Leader
 from .planet import Planet
 from .pop import Pop
 from .species import Species
@@ -108,25 +110,81 @@ class Model:
             del planet.pop_ids
 
         # create species
-        self.species = dict([(str(i), Species(str(i), v)) for (i,v) in enumerate(obj["species"])])
+        species = [Species(v) for v in obj["species"]]
+        self.species = dict([(s.id, s) for s in species])
 
         # link species to each other
-        for species in self.species.values():
-            species.children = []
-        for species in self.species.values():
-            if species.parent_id:
-                parent = self.species[species.parent_id]
-                species.parent = parent
-                parent.children.append(species)
-            else:
-                species.parent = None
-            del species.parent_id
+        for s in species:
+            s.children = []
+        for s in species:
+            if s.base_index != None:
+                base = species[s.base_index]
+                s.base = base
+                base.children.append(s)
+                del s.base_index
 
-        # link species and pops
-        for species in self.species.values():
-            species.pops = []
+        # link species to pops
+        for s in species:
+            s.pops = []
         for pop in self.pops.values():
-            species = self.species[pop.species_id]
-            species.pops.append(pop)
-            pop.species = species
-            del pop.species_id
+            s = species[pop.species_index]
+            pop.species = s
+            s.pops.append(pop)
+            del pop.species_index
+
+        # create factions
+        if "pop_factions" in obj:
+            self.factions = dict([(k, Faction(k,v)) for (k,v) in obj["pop_factions"].items() if v != "none"])
+        else:
+            self.factions = {}
+
+        # link factions and countries
+        for country in self.countries.values():
+            country.factions = []
+        for faction in self.factions.values():
+            country = self.countries[faction.country_id]
+            faction.country = country
+            country.factions.append(faction)
+            del faction.country_id
+
+        # link factions and pops
+        for faction in self.factions.values():
+            faction.members = [self.pops[id] for id in faction.member_ids]
+            for member in faction.members:
+                member.faction = faction
+            del faction.member_ids
+
+        # create leaders
+        self.leaders = dict([(k, Leader(k,v)) for k,v in obj["leaders"].items() if v != "none"])
+
+        # ilnk leaders and species
+        for s in species:
+            s.leaders = []
+        for leader in self.leaders.values():
+            s = species[leader.species_index]
+            leader.species = s
+            s.leaders.append(leader)
+            del leader.species_index
+
+        # link leaders and countries
+        for country in self.countries.values():
+            country.leaders = []
+        for leader in self.leaders.values():
+            if leader.country_id in self.countries:
+                country = self.countries[leader.country_id]
+                leader.country = country
+                country.leaders.append(leader)
+            else:
+                leader.country = None
+            del leader.country_id
+
+        for country in self.countries.values():
+            if country.ruler_id:
+                country.ruler = self.leaders[country.ruler_id]
+            del country.ruler_id
+
+        # link factions and leaders
+        for faction in self.factions.values():
+            if faction.leader_id in self.leaders:
+                faction.leader = self.leaders[faction.leader_id]
+            del faction.leader_id

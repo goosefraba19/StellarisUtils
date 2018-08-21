@@ -32,7 +32,7 @@ class CountryCounts:
         self._name = name
 
         self._species_pops = []
-        self._ethic_pops = []
+        self._faction_pops = []
         self._resources = []
         self._military = []
 
@@ -40,18 +40,18 @@ class CountryCounts:
         country = model.countries[self._id]
 
         species_pops = Counter()
-        ethic_pops = Counter()
+        faction_pops = Counter()
 
         for planet in country.owned_planets:
             for pop in planet.pops:
 
                 species = pop.species
-                if species.parent != None:
-                    species = species.parent
+                if species.base != None:
+                    species = species.base
                 species_pops[species.name] += 1
 
-                if pop.ethic:
-                    ethic_pops[pop.ethic] += 1
+                if pop.faction and pop.faction in country.factions:
+                    faction_pops[pop.faction.name] += 1
 
         resources = {}
         for key, value in country.resources.items():
@@ -66,20 +66,20 @@ class CountryCounts:
         }
 
         self._species_pops.append(species_pops)
-        self._ethic_pops.append(ethic_pops)
+        self._faction_pops.append(faction_pops)
         self._resources.append(resources)
         self._military.append(military)
 
     def export(self, settings):
         export_counters(settings, self._name + "_species_pops.csv", self._species_pops)
-        export_counters(settings, self._name + "_ethic_pops.csv", self._ethic_pops)
+        export_counters(settings, self._name + "_faction_pops.csv", self._faction_pops)
         export_counters(settings, self._name + "_resources.csv", self._resources)
         export_counters(settings, self._name + "_military.csv", self._military)
 
 
 
 class SpeciesCounts:
-    def __init__(self, ids, name):
+    def __init__(self, ids, name, include_children=False):
         if type(ids) is not list:
             self._ids = [ids]
         else:
@@ -87,18 +87,28 @@ class SpeciesCounts:
 
         self._name = name
         self._country_pops = []
+        self._include_children = include_children
 
     def step(self, model):
         country_pops = Counter()
 
         for pop in model.pops.values():
-            if pop.species.id in self._ids:
+            if self._is_included(pop.species):
                 if pop.planet.owner != None:
                     country_pops[pop.planet.owner.name] += 1
                 else:
                     country_pops["none"] += 1
 
         self._country_pops.append(country_pops)
+    
+    def _is_included(self, species):
+        if species.id in self._ids:
+            return True
+        elif self._include_children and species.base != None and species.base.id in self._ids:
+            return True
+        else:
+            return False
+
 
     def export(self, settings):
         export_counters(settings, self._name + "_country_pops.csv", self._country_pops)
@@ -121,8 +131,8 @@ class GalaxyCounts:
         for pop in model.pops.values():
 
             species = pop.species
-            if species.parent != None:
-                species = species.parent
+            if species.base != None:
+                species = species.base
             species_pops[species.name] += 1
 
             if pop.planet != None and pop.planet.owner != None:

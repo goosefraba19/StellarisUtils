@@ -21,6 +21,7 @@
 					{ "x": 0, "y": 0, "r": 480, "s": 2 },
 					{ "x": -400, "y": -420, "r": 80, "s": 15 }
 				],
+				"hyperlane_point_count": 2,
 				"debug": false,
 				"debug_color": [256,256,256]
 			},

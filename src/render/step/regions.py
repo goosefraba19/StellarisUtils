@@ -10,15 +10,37 @@ class RegionsStep(RenderStep):
 
 	def run(self, ctx, config):
 		points = []
-		voronoi_index = {}
+		system_indices = []
 		
 		index = 0
 		for system in ctx.model.systems.values():
 			point = convert_position_to_point(ctx, system.pos)
-			voronoi_index[system.id] = index
 			points.append(list(point))			
+			system_indices.append((system.id, index))
 			index += 1
-			
+
+		hyperlanes = []
+		exclude = set()
+		for src in ctx.model.systems.values():
+			for hyperlane in src.hyperlanes:
+				if hyperlane.dest not in exclude:
+					dest = ctx.model.systems[hyperlane.dest]
+					hyperlanes.append((src, dest))
+			exclude.add(system.id)
+
+		h = config["hyperlane_point_count"] + 1
+		for (src, dest) in hyperlanes:
+			for weight in [x/h for x in range(1,h)]:
+				point = convert_position_to_point(ctx, (
+					weight * src.pos[0] + (1 - weight) * dest.pos[0],
+					weight * src.pos[1] + (1 - weight) * dest.pos[1]
+				))
+
+				points.append(list(point))
+				system = src if 0.5 < weight else dest
+				system_indices.append((system.id, index))
+				index += 1
+
 		for ring in config["voronoi_rings"]:
 			for angle in range(0, 365, ring["s"]):
 				point = convert_position_to_point(ctx, (
@@ -33,10 +55,11 @@ class RegionsStep(RenderStep):
 		
 		vor = Voronoi(numpy.array(points))
 		
-		for system in ctx.model.systems.values():
-			region = vor.regions[vor.point_region[voronoi_index[system.id]]]			
+		for (id, index) in system_indices:
+			system = ctx.model.systems[id]
 			color = get_system_color(ctx, system)
 			if color:
+				region = vor.regions[vor.point_region[index]]			
 				self._render_region(ctx, vor, region, color)
 
 	def _render_region(self, ctx, vor, region, fill=None, outline=None):

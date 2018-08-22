@@ -1,3 +1,5 @@
+from .utils import getitem_or_default
+
 class Leader:
     def __init__(self, id, value):
         self.id = id
@@ -13,13 +15,14 @@ class Leader:
         else:
             self.name = None
 
-        if "gender" in value:
-            self.gender = value["gender"]
-        else:
-            self.gender = None
+        self.gender = getitem_or_default(value, "gender", None)
 
         self.role = value["class"]
         self.level = int(value["level"])
+
+
+
+        # relationships
 
         self.species = None
         self.country = None

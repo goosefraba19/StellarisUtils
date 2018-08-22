@@ -1,11 +1,13 @@
+from .utils import getitem_or_default
+
 class Ship:
     def __init__(self, id, value):
         self.id = id
+        self.name = getitem_or_default(value, "name", None)
 
-        if "name" in value:
-            self.name = value["name"]
-        else:
-            self.name = None
+
+
+        # relationships
 
         self.design = None
         self.fleet = None

@@ -1,16 +1,14 @@
+from .utils import getitem_or_default
+
 class Pop:
     def __init__(self, id, value):
         self.id = id
+        self.ethic = getitem_or_default(value, "ethos", { "ethic": None })["ethic"]
+        self.enslaved = getitem_or_default(value, "enslaved", "no") == "yes"
 
-        if "ethos" in value:
-            self.ethic = value["ethos"]["ethic"]
-        else:
-            self.ethic = None
 
-        if "enslaved" in value:
-            self.enslaved = True
-        else:
-            self.enslaved = False
+
+        # relationships
 
         self.planet = None
         self.species = None

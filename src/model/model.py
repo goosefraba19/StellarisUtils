@@ -64,8 +64,6 @@ class Model:
             del starbase.system_id
 
         # link countries and starbases
-        for country in self.countries.values():
-            country.starbases = []
         for starbase in self.starbases.values():
             owner = self.countries[starbase.owner_id]
             owner.starbases.append(starbase)
@@ -84,8 +82,9 @@ class Model:
 
         # link countries and planets
         for country in self.countries.values():
-            country.owned_planets = []
-            country.controlled_planets = []
+            if country.capital_id:
+                country.capital = self.planets[country.capital_id]
+            del country.capital_id
         for planet in self.planets.values():
             if planet.owner_id:
                 planet.owner = self.countries[planet.owner_id]
@@ -101,6 +100,14 @@ class Model:
 
             del planet.owner_id
             del planet.controller_id
+
+        # link countries to each other
+        for country in self.countries.values():
+            if country.overlord_id:
+                overlord = self.countries[country.overlord_id]
+                country.overlord = overlord
+                overlord.subjects.append(country)
+            del country.overlord_id
 
         # create pops
         self.pops = dict([(k, Pop(k,v)) for k,v in obj["pop"].items() if v != "none"])
@@ -118,8 +125,6 @@ class Model:
 
         # link species to each other
         for s in species:
-            s.children = []
-        for s in species:
             if s.base_index != None:
                 base = species[s.base_index]
                 s.base = base
@@ -127,8 +132,6 @@ class Model:
                 del s.base_index
 
         # link species to pops
-        for s in species:
-            s.pops = []
         for pop in self.pops.values():
             s = species[pop.species_index]
             pop.species = s
@@ -142,8 +145,6 @@ class Model:
             self.factions = {}
 
         # link factions and countries
-        for country in self.countries.values():
-            country.factions = []
         for faction in self.factions.values():
             country = self.countries[faction.country_id]
             faction.country = country
@@ -161,8 +162,6 @@ class Model:
         self.leaders = dict([(k, Leader(k,v)) for k,v in obj["leaders"].items() if v != "none"])
 
         # ilnk leaders and species
-        for s in species:
-            s.leaders = []
         for leader in self.leaders.values():
             s = species[leader.species_index]
             leader.species = s
@@ -170,8 +169,6 @@ class Model:
             del leader.species_index
 
         # link leaders and countries
-        for country in self.countries.values():
-            country.leaders = []
         for leader in self.leaders.values():
             if leader.country_id in self.countries:
                 country = self.countries[leader.country_id]
@@ -203,8 +200,6 @@ class Model:
         self.fleets = dict(fleets)
 
         # link fleets and countries
-        for country in self.countries.values():
-            country.fleets = []
         for fleet in self.fleets.values():
             if fleet.owner_id in self.countries:
                 owner = self.countries[fleet.owner_id]
@@ -224,8 +219,6 @@ class Model:
             del ship.design_id
 
         # link ships and fleets
-        for fleet in self.fleets.values():
-            fleet.ships = []
         for ship in self.ships.values():
             if ship.fleet_id in self.fleets:
                 fleet = self.fleets[ship.fleet_id]

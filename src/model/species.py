@@ -1,33 +1,26 @@
 import hashlib
 
+from .utils import getitem_or_default
+
 class Species:
     def __init__(self, value):
         self.name = value["name"]
-
-        if "trait" in value["traits"]:
-            self.traits = value["traits"]["trait"]
-        else:
-            self.traits = []
+        self.traits = getitem_or_default(value["traits"], "trait", [])
 
         self._class = value["class"]
         self._portrait = value["portrait"]
-
-        if "name_list" in value:
-            self._name_list = value["name_list"]
-        else:
-            self._name_list = None
-
-        if "home_planet" in value:
-            self._home_id = value["home_planet"]
-        else:
-            self._home_id = None
-
+        self._name_list = getitem_or_default(value, "name_list", None)
+        self._home_id = getitem_or_default(value, "home_planet", None)
         self.id = self._gen_id()
+
+
+
+        # relationships
         
         self.base = None
-        self.children = None 
-        self.pops = None
-        self.leaders = None
+        self.children = [] 
+        self.pops = []
+        self.leaders = []
 
         if "base" in value:
             self.base_index = int(value["base"])

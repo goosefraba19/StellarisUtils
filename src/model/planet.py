@@ -1,3 +1,5 @@
+from .utils import getitem_or_default
+
 PLANET_CLASS_HABITABLE = set([
     # Dry
     "pc_desert",
@@ -27,25 +29,18 @@ class Planet:
         self.type = value["planet_class"]
         self.is_habitable = value["planet_class"] in PLANET_CLASS_HABITABLE 
 
+
+
+        # relationships
+
         self.owner = None
         self.controller = None
         self.pops = None
         self.system = None
 
-        if "owner" in value:
-            self.owner_id = value["owner"]
-        else:
-            self.owner_id = None
-
-        if "controller" in value:
-            self.controller_id = value["controller"]
-        else:
-            self.controller_id = None
-
-        if "pop" in value:
-            self.pop_ids = value["pop"]
-        else:
-            self.pop_ids = []
+        self.owner_id = getitem_or_default(value, "owner", None)
+        self.controller_id = getitem_or_default(value, "controller", None)
+        self.pop_ids = getitem_or_default(value, "pop", [])
 
     def __str__(self):
         return f"Planet({self.id},name={self.name},type={self.type})"

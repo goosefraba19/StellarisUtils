@@ -3,6 +3,10 @@ class Starbase:
         self.id = id
         self.level = value["level"]
 
+
+
+        # relationships
+
         self.owner = None
         self.system = None
 

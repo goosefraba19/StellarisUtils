@@ -1,22 +1,20 @@
+from .utils import getitem_or_default
+
 class Fleet:
     def __init__(self, id, value):
         self.id = id
+        self.name = getitem_or_default(value, "name", None)
+        self.is_civilian = getitem_or_default(value, "civilian", "no") == "yes"
+        self.is_station = getitem_or_default(value, "station", "no") == "yes"
 
-        if "name" in value:
-            self.name = value["name"]
-        else:
-            self.name = None
 
-        self.is_civilian = "civilian" in value and value["civilian"] == "yes"
-        self.is_station = "station" in value and value["station"] == "yes"
 
-        self.ships = None
+        # relationships
+
+        self.ships = []
         self.owner = None
 
-        if "owner" in value:
-            self.owner_id = value["owner"]
-        else:
-            self.owner_id = None
+        self.owner_id = getitem_or_default(value, "owner", None)
 
     def __str__(self):
         return f"Fleet({self.id},name={self.name})"

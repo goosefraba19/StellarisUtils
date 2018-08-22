@@ -25,6 +25,7 @@ class Country:
         self.factions = None
         self.leaders = None
         self.ruler = None
+        self.fleets = None
 
         if "ruler" in value:
             self.ruler_id = value["ruler"]

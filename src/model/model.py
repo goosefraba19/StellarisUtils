@@ -4,9 +4,12 @@ from ..parse import Parser
 
 from .country import Country
 from .faction import Faction
+from .fleet import Fleet
 from .leader import Leader
 from .planet import Planet
 from .pop import Pop
+from .ship import Ship 
+from .ship_design import ShipDesign
 from .species import Species
 from .starbase import Starbase
 from .system import System
@@ -188,3 +191,46 @@ class Model:
             if faction.leader_id in self.leaders:
                 faction.leader = self.leaders[faction.leader_id]
             del faction.leader_id
+
+        # create fleets
+        fleets = []
+        for k,v in obj["fleet"].items():
+            if v == "none":
+                continue
+            if "killed" in v and v["killed"] == "yes":
+                continue
+            fleets.append((k, Fleet(k,v)))
+        self.fleets = dict(fleets)
+
+        # link fleets and countries
+        for country in self.countries.values():
+            country.fleets = []
+        for fleet in self.fleets.values():
+            if fleet.owner_id in self.countries:
+                owner = self.countries[fleet.owner_id]
+                fleet.owner = owner
+                owner.fleets.append(fleet)
+            del fleet.owner_id
+
+        # create ship designs
+        self.ship_designs = dict([(k, ShipDesign(k,v)) for k,v in obj["ship_design"].items() if v != "none"])
+
+        # create ships
+        self.ships = dict([(k, Ship(k,v)) for k,v in obj["ships"].items() if v != "none"])
+
+        # link ships and ship designs
+        for ship in self.ships.values():
+            ship.design = self.ship_designs[ship.design_id]
+            del ship.design_id
+
+        # link ships and fleets
+        for fleet in self.fleets.values():
+            fleet.ships = []
+        for ship in self.ships.values():
+            if ship.fleet_id in self.fleets:
+                fleet = self.fleets[ship.fleet_id]
+                ship.fleet = fleet
+                fleet.ships.append(ship)
+            del ship.fleet_id
+
+

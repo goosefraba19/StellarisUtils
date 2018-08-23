@@ -8,10 +8,10 @@
 	
 	"render": {
 		"image": {
-			"size": [1200,1200],
-			"center": [600,600],
+			"size": [1500,1500],
+			"center": [750,750],
 			"color": [0,0,0],
-			"scale": 1
+			"scale": 1.5
 		},
 		"steps": [			
 			{ 
@@ -32,6 +32,7 @@
 			},
 			{
 				"key": "pops",
+				"scale": 2.25,
 				"outline": [0,0,0]
 			},
 			{
@@ -39,11 +40,11 @@
 				"sizes": {
 					"starbase_level_outpost": 0,
 					"starbase_level_starport": 1,
-					"starbase_level_starhold": 1,
-					"starbase_level_starfortress": 2,
-					"starbase_level_citadel": 3,
-					"starbase_level_ai": 3,
-					"starbase_level_marauder": 3
+					"starbase_level_starhold": 2,
+					"starbase_level_starfortress": 3,
+					"starbase_level_citadel": 4,
+					"starbase_level_ai": 4,
+					"starbase_level_marauder": 4
 				},
 				"fill": [256,256,256]
 			},

@@ -4,7 +4,7 @@ class System:
     def __init__(self, id, value):
 
         self.id = id
-        self.name = value["name"]
+        self.name = getitem_or_default(value, "name", None)
         self.pos = (float(value["coordinate"]["x"]), float(value["coordinate"]["y"]))
         self.hyperlanes = [Hyperlane(self.id, x["to"], float(x["length"])) for x in getitem_or_default(value, "hyperlane", [])]
 

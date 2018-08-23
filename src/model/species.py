@@ -7,8 +7,8 @@ class Species:
         self.name = value["name"]
         self.traits = getitem_or_default(value["traits"], "trait", [])
 
-        self._class = value["class"]
-        self._portrait = value["portrait"]
+        self._class = getitem_or_default(value, "class", None)
+        self._portrait = getitem_or_default(value, "portrait", None)
         self._name_list = getitem_or_default(value, "name_list", None)
         self._home_id = getitem_or_default(value, "home_planet", None)
         self.id = self._gen_id()

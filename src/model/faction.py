@@ -2,8 +2,6 @@ from .utils import getitem_or_default
 
 class Faction:
     def __init__(self, id, value):
-        print(value["parameters"])
-        input()
         self.id = id
         self.name = getitem_or_default(value, "name", None)
         self.type = getitem_or_default(value, "type", None)

@@ -24,10 +24,10 @@ PLANET_CLASS_HABITABLE = set([
 class Planet:
     def __init__(self, id, value):
         self.id = id
-        self.name = value["name"]
-        self.size = int(value["planet_size"])
-        self.type = value["planet_class"]
-        self.is_habitable = value["planet_class"] in PLANET_CLASS_HABITABLE 
+        self.name = getitem_or_default(value, "name", None)
+        self.size = int(getitem_or_default(value, "planet_size", 0))
+        self.type = getitem_or_default(value, "planet_class", None)
+        self.is_habitable = self.type in PLANET_CLASS_HABITABLE 
 
 
 

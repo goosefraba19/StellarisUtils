@@ -1,7 +1,9 @@
+from .utils import getitem_or_default
+
 class Starbase:
     def __init__(self, id, value):
         self.id = id
-        self.level = value["level"]
+        self.level = getitem_or_default(value, "level", None)
 
 
 

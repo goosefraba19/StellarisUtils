@@ -17,8 +17,8 @@ class Leader:
 
         self.gender = getitem_or_default(value, "gender", None)
 
-        self.role = value["class"]
-        self.level = int(value["level"])
+        self.role = getitem_or_default(value, "class", None)
+        self.level = int(getitem_or_default(value, "level", 0))
 
 
 

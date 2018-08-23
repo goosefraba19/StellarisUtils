@@ -28,7 +28,7 @@ class Leader:
         self.country = None
 
         self.species_index = int(value["species_index"])
-        self.country_id = value["country"]
+        self.country_id = getitem_or_default(value, "country", None)
 
     def __str__(self):
         return f"Leader({self.id},name={self.name})"

@@ -35,6 +35,19 @@
 				"outline": [0,0,0]
 			},
 			{
+				"key": "starbases",
+				"sizes": {
+					"starbase_level_outpost": 0,
+					"starbase_level_starport": 1,
+					"starbase_level_starhold": 1,
+					"starbase_level_starfortress": 2,
+					"starbase_level_citadel": 3,
+					"starbase_level_ai": 3,
+					"starbase_level_marauder": 3
+				},
+				"fill": [256,256,256]
+			},
+			{
 				"key": "text",
 				"pos": [10,10],
 				"text": "{date}",

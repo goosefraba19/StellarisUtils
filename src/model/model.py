@@ -2,6 +2,7 @@ import json, zipfile
 
 from ..parse import Parser
 
+from .alliance import Alliance
 from .country import Country
 from .faction import Faction
 from .fleet import Fleet
@@ -225,5 +226,31 @@ class Model:
                 ship.fleet = fleet
                 fleet.ships.append(ship)
             del ship.fleet_id
+
+        # create alliances
+        if "alliance" in obj and len(obj["alliance"]) != 0:
+            self.alliances = dict([(k, Alliance(k,v)) for k,v in obj["alliance"].items() if v != "none"])
+        else:
+            self.alliances = {}
+
+        # link countries and alliances
+        for alliance in self.alliances.values():
+            alliance.leader = self.countries[alliance.leader_id]
+            del alliance.leader_id
+
+            alliance.members = [self.countries[id] for id in alliance.member_ids]
+            for member in alliance.members:
+                member.alliance = alliance
+            del alliance.member_ids
+
+        for country in self.countries.values():
+            if country.associated_alliance_id in self.alliances:
+                alliance = self.alliances[country.associated_alliance_id]
+                country.associated_alliance = alliance
+                alliance.associates.append(country)
+            del country.associated_alliance_id
+
+            
+
 
 

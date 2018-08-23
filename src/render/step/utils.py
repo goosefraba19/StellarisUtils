@@ -14,17 +14,36 @@ COUNTRY_OFFSETS = [(random.randint(-40,40), random.randint(-40,40), random.randi
 
 def get_system_color(ctx, system):
     if system.starbase:
-        owner = system.starbase.owner
-        color = owner.flag["colors"][1]
-        if color in ctx.config["color"]:
+
+        country = system.starbase.owner
+        country_color = _get_color(ctx, country.flag.colors[1])
+
+        offset = (0,0,0)
+        try:
+            offset = COUNTRY_OFFSETS[int(country.id)]					
+        except IndexError:
             offset = (0,0,0)
-            try:
-                offset = COUNTRY_OFFSETS[int(owner.id)]					
-            except IndexError:
-                offset = (0,0,0)
-            return tuple([a+b-30 for (a,b) in zip(ctx.config["color"][color], offset)])
+
+        country_color = tuple([a+b for a,b in zip(country_color, offset)])
+
+        base = None
+        if ctx.config["use_federation_or_overlord_color"]:
+            if country.alliance:
+                base = country.alliance.members[0]
+            if country.overlord:
+                base = country.overlord
+
+        if base != None and base != country:
+            base_color = _get_color(ctx, base.flag.colors[1])
+            return tuple([int(0.75*a + 0.25*b) for a,b in zip(base_color, country_color)])
         else:
-            print("WARNING: Missing color '" + color + "'")				
-            return (256, 256, 256)
+            return country_color
     else:
         return None
+
+def _get_color(ctx, color):
+    if color in ctx.config["color"]:
+        return ctx.config["color"][color]
+    else:
+        print("WARNING: Missing color '" + color + "'")				
+        return (256, 256, 256)

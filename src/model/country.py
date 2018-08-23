@@ -3,10 +3,15 @@ from .utils import getitem_or_default
 class Country:
     def __init__(self, id, value):
         self.id = id
-        self.type = value["type"]
-        self.name = value["name"]
-        self.adjective = value["adjective"]
-        self.flag = value["flag"]
+        self.type = getitem_or_default(value, "type", None)
+        self.name = getitem_or_default(value, "name", None)
+        self.adjective = getitem_or_default(value, "adjective", None) 
+
+        if "flag" in value:
+            self.flag = Flag(value["flag"])
+        else:
+            self.flag = None
+
         self.city_graphical_culture = getitem_or_default(value, "city_graphical_culture", None)
         self.graphical_culture = getitem_or_default(value, "graphical_culture", None)
         self.room = getitem_or_default(value, "room", None)
@@ -31,9 +36,9 @@ class Country:
         self.hyperlane_system_ids = set(getitem_or_default(value, "hyperlane_systems", []))
         self.restricted_system_ids = set(getitem_or_default(value, "restricted_systems", []))
 
-        self.military_power = float(value["military_power"])
-        self.fleet_size = float(value["fleet_size"])
-        self.power_score = float(value["power_score"])
+        self.military_power = float(getitem_or_default(value, "military_power", 0))
+        self.fleet_size = float(getitem_or_default(value, "fleet_size", 0))
+        self.power_score = float(getitem_or_default(value, "power_score", 0))
 
         if "standard_economy_module" in value["modules"]:
             self.resources = {}
@@ -73,7 +78,6 @@ class Country:
         self.subjects = []
 
         self.ruler_id = getitem_or_default(value, "ruler", None)
-        self.alliance_id = getitem_or_default(value, "alliance", None)
         self.associated_alliance_id = getitem_or_default(value, "associated_alliance", None)
         self.capital_id = getitem_or_default(value, "capital", None)
         self.overlord_id = getitem_or_default(value, "overlord", None)
@@ -81,6 +85,14 @@ class Country:
 
     def __str__(self):
         return f"Country({self.id},name={self.name})"
+
+
+
+class Flag:
+    def __init__(self, value):
+        self.icon = value["icon"]
+        self.background = value["background"]
+        self.colors = [c for c in value["colors"] if c != "null"]
 
 
 

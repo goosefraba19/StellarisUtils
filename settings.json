@@ -41,6 +41,7 @@
 				"fill": [256,256,256]
 			}
 		],		
+		"use_federation_or_overlord_color": false,
 		"color": {
 			"blue": [0,0,256],
 			"black": [86,86,86],
@@ -54,7 +55,7 @@
 			"dark_teal": [0,128,128],
 			"green": [0,128,0],
 			"grey": [192,192,192],
-			"indigo": [64,0,256],
+			"indigo": [128,64,256],
 			"light_blue": [137,207,240],
 			"light_green": [144,238,144],
 			"light_orange": [256,196,128],

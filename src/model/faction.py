@@ -2,9 +2,11 @@ from .utils import getitem_or_default
 
 class Faction:
     def __init__(self, id, value):
+        print(value["parameters"])
+        input()
         self.id = id
-        self.name = value["name"]
-        self.type = value["type"]
+        self.name = getitem_or_default(value, "name", None)
+        self.type = getitem_or_default(value, "type", None)
         self.support = float(getitem_or_default(value, "support", 0))
         self.happiness = float(getitem_or_default(value, "happiness", 0))
 

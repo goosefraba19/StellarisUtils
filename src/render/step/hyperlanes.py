@@ -1,6 +1,6 @@
 from ..render import RenderStep
-
-from .utils import convert_position_to_point
+from ..color import get_color
+from ..utils import convert_position_to_point
 
 class HyperlaneStep(RenderStep):
 	def __init__(self):
@@ -8,15 +8,19 @@ class HyperlaneStep(RenderStep):
 
 	def run(self, ctx, config):
 		exclude = set()
-		for system in ctx.model.systems.values():
-			for hyperlane in system.hyperlanes:
-				if hyperlane.dest not in exclude:
-					a = convert_position_to_point(ctx, system.pos)
-					b = convert_position_to_point(ctx, ctx.model.systems[hyperlane.dest].pos)
-					ctx.draw.line(
-						(a[0],a[1],b[0],b[1]), 
-						fill=tuple(config["fill"]),
-					 	width=config["width"]
-					)
-			exclude.add(system.id)
+		for src in ctx.model.systems.values():
+			for hyperlane in src.hyperlanes:
+				if hyperlane.dest in exclude:
+					continue
+				
+				dest = ctx.model.systems[hyperlane.dest]
+				a = convert_position_to_point(ctx, src.pos)
+				b = convert_position_to_point(ctx, dest.pos)
+				ctx.draw.line(
+					(a[0],a[1],b[0],b[1]), 
+					fill=get_color(ctx, config["fill"]),
+					width=config["width"]
+				)
+
+			exclude.add(src.id)
 			

@@ -1,5 +1,7 @@
 from ..render import RenderStep
-from .utils import convert_position_to_point
+from ..color import get_color
+from ..utils import convert_position_to_point
+
 
 class StarbasesStep(RenderStep):
 	def __init__(self):
@@ -12,7 +14,8 @@ class StarbasesStep(RenderStep):
 				p = convert_position_to_point(ctx, system.pos)
 				ctx.draw.ellipse(
 					(p[0]-r,p[1]-r,p[0]+r,p[1]+r),
-					fill=tuple(config["fill"])
+					fill=get_color(ctx, config["fill"], { "system": system }),
+					outline=get_color(ctx, config["outline"], { "system": system })
 				)
 
 	def _get_starbase_size(self, config, starbase):
@@ -22,4 +25,5 @@ class StarbasesStep(RenderStep):
 			return config["sizes"][starbase.level]
 		else:
 			return 0
+
 

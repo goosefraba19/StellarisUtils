@@ -2,7 +2,8 @@ import math, numpy, random
 from scipy.spatial import Voronoi
 
 from ..render import RenderStep
-from .utils import convert_position_to_point, get_system_color
+from ..color import get_color
+from ..utils import convert_position_to_point
 
 class RegionsStep(RenderStep):
 	def __init__(self):
@@ -49,7 +50,7 @@ class RegionsStep(RenderStep):
 				))
 				
 				if config["debug"]:
-					ctx.draw.point(point, fill=tuple(config["debug_color"]))
+					ctx.draw.point(point, fill=get_color(ctx, config["debug_color"]))
 				
 				points.append(list(point))				
 		
@@ -57,7 +58,7 @@ class RegionsStep(RenderStep):
 		
 		for (id, index) in system_indices:
 			system = ctx.model.systems[id]
-			color = get_system_color(ctx, system)
+			color = get_color(ctx, config["fill"], { "system": system })
 			if color:
 				region = vor.regions[vor.point_region[index]]			
 				self._render_region(ctx, vor, region, color)

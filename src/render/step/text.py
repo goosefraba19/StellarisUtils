@@ -1,4 +1,5 @@
 from ..render import RenderStep
+from ..color import get_color
 
 class TextStep(RenderStep):
 	def __init__(self):
@@ -11,5 +12,5 @@ class TextStep(RenderStep):
 		ctx.draw.text(
 			tuple(config["pos"]),
 			text, 
-			fill=tuple(config["fill"])
+			fill=get_color(ctx, config["fill"])
 		)

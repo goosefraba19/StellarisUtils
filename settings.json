@@ -22,17 +22,29 @@
 					{ "x": -400, "y": -420, "r": 80, "s": 15 }
 				],
 				"hyperlane_point_count": 2,
+				"fill": { 
+					"key": "blend",
+					"first": { "key": "system_owner" },
+					"second": { "key": "system_controller" },
+					"weight": 0.25
+				},
 				"debug": false,
 				"debug_color": [256,256,256]
 			},
 			{
 				"key": "hyperlanes",
-				"fill": [256,256,256,128],
+				"fill": [256,256,256],
 				"width": 1
 			},
 			{
 				"key": "pops",
 				"scale": 2.25,
+				"fill": {
+					"key": "blend",
+					"first": { "key": "system_owner" },
+					"second": [0,0,0],
+					"weight": 0.75
+				},
 				"outline": [0,0,0]
 			},
 			{
@@ -46,7 +58,8 @@
 					"starbase_level_ai": 4,
 					"starbase_level_marauder": 4
 				},
-				"fill": [256,256,256]
+				"fill": [256,256,256],
+				"outline": "none"
 			},
 			{
 				"key": "text",
@@ -79,7 +92,8 @@
 			"red_orange": [256,86,0],
 			"teal": [0,192,192],
 			"turquoise": [64,224,208],
-			"yellow": [256, 256, 0]
+			"yellow": [256,256,0],
+			"white": [0,0,0]
 		}
 	}
 }

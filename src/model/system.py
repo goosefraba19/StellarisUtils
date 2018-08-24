@@ -2,7 +2,6 @@ from .utils import getitem_or_default
 
 class System:
     def __init__(self, id, value):
-
         self.id = id
         self.name = getitem_or_default(value, "name", None)
         self.pos = (float(value["coordinate"]["x"]), float(value["coordinate"]["y"]))
@@ -15,7 +14,16 @@ class System:
         self.planets = None
         self.starbase = None
 
-        self.planet_ids = getitem_or_default(value, "planet", [])
+        if "planet" in value:
+            ids = value["planet"]
+            if type(ids) == list:
+                self.planet_ids = ids
+            elif type(ids) == str:
+                self.planet_ids = [ids]
+            else:
+                raise Exception(f"Unrecognized type '{type(ids)}' for planet ids.")
+        else:
+            self.planet_ids = []
 
     def __str__(self):
         return f"System({self.id},name={self.name})"

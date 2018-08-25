@@ -1,21 +1,22 @@
 import csv, os
 from collections import Counter
 
+from .files import get_output_folder_path
 
 
-def export_counters(settings, filename, counters):
+def export_counters(filename, counters):
     keys = set([])
     for counter in counters:
         for key in counter.keys():
             keys.add(key)
     keys = list(sorted(keys))
 
-    folder_path = os.path.join(settings["output_folder_path"], settings["current"])
+    output_folder_path = get_output_folder_path()
 
-    if not os.path.exists(folder_path):
-        os.makedirs(folder_path)
+    if not os.path.exists(output_folder_path):
+        os.makedirs(output_folder_path)
 
-    path = os.path.join(folder_path, filename)
+    path = os.path.join(output_folder_path, filename)
 
     with open(path, "w", newline='') as file:
         writer = csv.DictWriter(file, keys)
@@ -70,11 +71,11 @@ class CountryCounts:
         self._resources.append(resources)
         self._military.append(military)
 
-    def export(self, settings):
-        export_counters(settings, self._name + "_species_pops.csv", self._species_pops)
-        export_counters(settings, self._name + "_faction_pops.csv", self._faction_pops)
-        export_counters(settings, self._name + "_resources.csv", self._resources)
-        export_counters(settings, self._name + "_military.csv", self._military)
+    def export(self):
+        export_counters(self._name + "_species_pops.csv", self._species_pops)
+        export_counters(self._name + "_faction_pops.csv", self._faction_pops)
+        export_counters(self._name + "_resources.csv", self._resources)
+        export_counters(self._name + "_military.csv", self._military)
 
 
 
@@ -110,8 +111,8 @@ class SpeciesCounts:
             return False
 
 
-    def export(self, settings):
-        export_counters(settings, self._name + "_country_pops.csv", self._country_pops)
+    def export(self):
+        export_counters(self._name + "_country_pops.csv", self._country_pops)
 
 
 
@@ -155,8 +156,8 @@ class GalaxyCounts:
         self._country_planets.append(country_planets)
         self._scores.append(scores)
 
-    def export(self, settings):
-        export_counters(settings, "galaxy_species_pops.csv", self._species_pops)
-        export_counters(settings, "galaxy_country_pops.csv", self._country_pops)
-        export_counters(settings, "galaxy_country_planets.csv", self._country_planets)
-        export_counters(settings, "galaxy_score.csv", self._scores)
+    def export(self):
+        export_counters("galaxy_species_pops.csv", self._species_pops)
+        export_counters("galaxy_country_pops.csv", self._country_pops)
+        export_counters("galaxy_country_planets.csv", self._country_planets)
+        export_counters("galaxy_score.csv", self._scores)

@@ -1,16 +1,8 @@
-import json, os
+from src.files import get_settings, list_jsonzip_paths
 from src.model import Model
 from src.statistics import GalaxyCounts, CountryCounts, SpeciesCounts
 
-def get_settings():
-	with open("settings.json") as fp:
-		return json.load(fp)
-
 def main():
-	settings = get_settings()
-
-	folder_path = os.path.join(settings["json_folder_path"], settings["current"])    
-
 	stats = [
 		GalaxyCounts(),		
 		CountryCounts("0", "country_gekkota"),
@@ -23,15 +15,14 @@ def main():
 		SpeciesCounts(["966875c49a50703e480bd7d5543c0809"], "species_hahnmur", include_children=True)
 	]
 
-	json_paths = [os.path.join(folder_path, p) for p in os.listdir(folder_path)]
-	for path in sorted(json_paths):
-		print(path)
+	for path in list_jsonzip_paths():
 		model = Model.from_jsonzip(path)
+		print(model.date)
 		for stat in stats:
 			stat.step(model)
 
 	for stat in stats:
-		stat.export(settings)
+		stat.export()
 
 if __name__=="__main__":
 	main()

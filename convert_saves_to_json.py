@@ -1,29 +1,28 @@
 import json, os, time, zipfile
+
+from src.files import get_settings, get_jsonzip_folder_path, list_savefile_paths
 from src.parse import Parser
 
-def get_settings():
-	with open("settings.json") as fp:
-		return json.load(fp)
-		
-def main():
-	settings = get_settings()
-	
-	print("Current game is '" + settings["current"] + "'.")
-	
-	src_folder_path = os.path.join(settings["saves_folder_path"], settings["current"])
-	dest_folder_path = os.path.join(settings["json_folder_path"], settings["current"])
-	
+def get_pairs():
+	dest_folder_path = get_jsonzip_folder_path()
+
 	if not os.path.exists(dest_folder_path):
 		os.makedirs(dest_folder_path)
 
-	pairs = []
-	for name in os.listdir(src_folder_path):
-		src_path = os.path.join(src_folder_path, name)
-		dest_path = os.path.join(dest_folder_path, os.path.splitext(name)[0] + ".zip")
+	for src_path in list_savefile_paths():
+		name = os.path.splitext(os.path.basename(src_path))[0]
+		dest_path = os.path.join(dest_folder_path, name + ".zip")
 
 		if not os.path.exists(dest_path):
-			pairs.append((name, src_path, dest_path))
+			yield (name, src_path, dest_path)
 
+
+def main():
+	settings = get_settings()
+	
+	pairs = list(get_pairs())
+
+	print("Current game is '" + settings["current"] + "'.")
 	print(f"Converting {len(pairs)} savefiles.")
 	print()
 

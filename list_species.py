@@ -1,23 +1,12 @@
-import json, os
-
+from src.files import list_jsonzip_paths
 from src.model import Model
 
-def get_settings():
-    with open("settings.json") as fp:
-        return json.load(fp)
-
 def main():
-    settings = get_settings()
-
     all_species = {}
 
-    folder_path = os.path.join(settings["json_folder_path"], settings["current"])    
-    for name in os.listdir(folder_path):
-        path = os.path.join(folder_path, name)
-        print(path)
-
+    for path in list_jsonzip_paths():
         model = Model.from_jsonzip(path)
-
+        print(model.date)
         for species in model.species.values():
             all_species[species.id] = species
 

@@ -1,26 +1,24 @@
-import json, os, shutil, time
+import os, shutil, time
 
-def get_settings():
-	with open("settings.json") as fp:
-		return json.load(fp)
+from src.files import get_settings
 
-def copy_new_autosaves(src_path, dest_path):
+def copy_new_autosaves(src_folder_path, dest_folder_path):
 
-	if not os.path.exists(dest_path):
-		os.mkdir(dest_path)
+	if not os.path.exists(dest_folder_path):
+		os.mkdir(dest_folder_path)
 	
-	paths = filter(
+	names = filter(
         lambda p: p.startswith("autosave"),
-        os.listdir(src_path)
+        os.listdir(src_folder_path)
     )
 	
-	for path in paths:
-		src = os.path.join(src_path, path)
-		dest = os.path.join(dest_path, path[9:])
+	for name in names:
+		src_path = os.path.join(src_folder_path, name)
+		dest_path = os.path.join(dest_folder_path, name[9:])
 
-		if not os.path.exists(dest):
-			shutil.copyfile(src, dest)
-			print(dest)
+		if not os.path.exists(dest_path):
+			shutil.copyfile(src_path, dest_path)
+			print(dest_path)
 		
 def main():
 
@@ -38,10 +36,10 @@ def main():
 	if not os.path.exists(dest_folder_path):
 		os.mkdir(dest_folder_path)
 		
-	pairs = [(os.path.join(src_folder_path, p), os.path.join(dest_folder_path, p)) for p in os.listdir(src_folder_path)]
+	folder_pairs = [(os.path.join(src_folder_path, p), os.path.join(dest_folder_path, p)) for p in os.listdir(src_folder_path)]
 	
 	while True:
-		for pair in pairs:
+		for pair in folder_pairs:
 			copy_new_autosaves(*pair)
 		time.sleep(interval)
 	

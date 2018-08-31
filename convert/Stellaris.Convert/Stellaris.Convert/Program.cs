@@ -42,13 +42,18 @@ namespace Stellaris.Convert
 
         private static void WriteSaveObject(object obj, string filePath)
         {
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+
             using (var archive = ZipFile.Open(filePath, ZipArchiveMode.Create))
             {
                 var entry = archive.CreateEntry("gamestate.json", CompressionLevel.Optimal);
 
                 using (var writer = new StreamWriter(entry.Open()))
                 {
-                    writer.Write(JsonConvert.SerializeObject(obj));
+                    new JsonSerializer().Serialize(writer, obj);
                 }
             }
         }

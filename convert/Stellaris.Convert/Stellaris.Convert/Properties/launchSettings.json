@@ -1,7 +1,8 @@
 {
   "profiles": {
     "Stellaris.Convert": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "input.sav output.zip"
     }
   }
 }

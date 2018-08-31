@@ -14,17 +14,14 @@ namespace Stellaris.Convert
         public Lexer(StreamReader reader)
         {
             this.reader = reader;
-            this.Step();
+            this.next = this.reader.Read();
         }
-
-        private HashSet<char> textSet = new HashSet<char>("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_:.@-".ToCharArray());
 
         public Token Token()
         {
             while (true)
             {
-                var i = this.next;
-                if (i == -1)
+                if (this.next == -1)
                 {
                     return new Token("eof");
                 }
@@ -36,25 +33,22 @@ namespace Stellaris.Convert
                     case '\t':
                     case '\n':
                     case ' ':
-                        this.Step();
+                        this.next = this.reader.Read();
                         continue;
                     case '{':
-                        this.Step();
+                        this.next = this.reader.Read();
                         return new Token("{");
                     case '}':
-                        this.Step();
+                        this.next = this.reader.Read();
                         return new Token("}");
                     case '=':
-                        this.Step();
+                        this.next = this.reader.Read();
                         return new Token("=");
+                    case '\"':
+                        return new Token("text", this.GetEscapedString());
                 }
 
-                if (c == '\"')
-                {
-                    return new Token("text", this.GetEscapedString());
-                }
-
-                if (this.textSet.Contains(c))
+                if (this.IsValidTextCharacter(c))
                 {
                     return new Token("text", this.GetTextString(c));
                 }
@@ -63,10 +57,17 @@ namespace Stellaris.Convert
             }
         }
 
-        private int Step()
+        private bool IsValidTextCharacter(char c)
         {
-            this.next = this.reader.Read();
-            return this.next;
+            // [a-zA-Z0-9_:.@-]
+            return ('a' <= c && c <= 'z') ||
+                   ('A' <= c && c <= 'Z') ||
+                   ('0' <= c && c <= '9') ||
+                   (c == '_') ||
+                   (c == ':') ||
+                   (c == '.') ||
+                   (c == '@') ||
+                   (c == '-');
         }
 
         private string GetTextString(char first)
@@ -76,14 +77,14 @@ namespace Stellaris.Convert
 
             while (true)
             {
-                var i = this.Step();
-                if (i == -1)
+                this.next = this.reader.Read();
+                if (this.next == -1)
                 {
                     throw new Exception("ERROR: EOF in GetEscapedString?");
                 }
 
-                char c = (char)i;
-                if (this.textSet.Contains(c))
+                char c = (char)this.next;
+                if (this.IsValidTextCharacter(c))
                 {
                     builder.Append(c);
                 }
@@ -100,16 +101,16 @@ namespace Stellaris.Convert
 
             while (true)
             {
-                var i = this.Step();
-                if (i == -1)
+                this.next = this.reader.Read();
+                if (this.next == -1)
                 {
                     throw new Exception("ERROR: EOF in GetEscapedString?");
                 }
 
-                char c = (char)i;
+                char c = (char)this.next;
                 if (c == '\"')
                 {
-                    this.Step();
+                    this.next = this.reader.Read();
                     return builder.ToString();
                 }
                 else

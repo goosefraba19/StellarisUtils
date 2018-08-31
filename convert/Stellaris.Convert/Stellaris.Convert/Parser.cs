@@ -92,20 +92,22 @@ namespace Stellaris.Convert
                 return pairs;
             }
 
-            var keySet = new HashSet<string>(pairs.Select(t => t.Item1));
-            if (keySet.Count == 1 && keySet.Single() == null)
+            var isList = pairs.All(t => t.Item1 == null);
+            if (isList)
             {
                 return pairs
                     .Select(t => t.Item2)
                     .ToList();
             }
-
-            return pairs
-                .GroupBy(t => t.Item1, t => t.Item2)
-                .ToDictionary(
-                    g => g.Key,
-                    g => (g.Count() == 1) ? g.Single() : g.ToList()
-                );
+            else
+            {
+                return pairs
+                    .GroupBy(t => t.Item1, t => t.Item2)
+                    .ToDictionary(
+                        g => g.Key,
+                        g => (g.Count() == 1) ? g.Single() : g.ToList()
+                    );
+            }
         }
     }
 }

@@ -1,4 +1,4 @@
-import json, os, time, zipfile
+import json, os, subprocess, time, zipfile
 
 from src.files import get_settings, get_jsonzip_folder_path, list_savefile_paths
 from src.parse import Parser
@@ -16,6 +16,22 @@ def get_pairs():
 		if not os.path.exists(dest_path):
 			yield (name, src_path, dest_path)
 
+def convert_python(src_path, dest_path):
+	parser = Parser()
+
+	src_archive = zipfile.ZipFile(src_path)
+	with src_archive.open("gamestate") as file:
+		data = file.read().decode("utf-8")
+		parser.input(data)
+
+	obj = parser.parse()
+
+	dest_archive = zipfile.ZipFile(dest_path, mode="w", compression=zipfile.ZIP_DEFLATED)
+	dest_archive.writestr("gamestate.json", json.dumps(obj))
+	dest_archive.close()
+
+def convert_dotnet(src_path, dest_path):
+	subprocess.run(["dotnet", "convert/Stellaris.Convert.dll", src_path, dest_path], capture_output=True)
 
 def main():
 	settings = get_settings()
@@ -29,18 +45,12 @@ def main():
 	for (name, src_path, dest_path) in pairs:
 		t_start = time.time()
 
-		parser = Parser()
-
-		src_archive = zipfile.ZipFile(src_path)
-		with src_archive.open("gamestate") as file:
-			data = file.read().decode("utf-8")
-			parser.input(data)
-
-		obj = parser.parse()
-
-		dest_archive = zipfile.ZipFile(dest_path, mode="w", compression=zipfile.ZIP_DEFLATED)
-		dest_archive.writestr("gamestate.json", json.dumps(obj))
-		dest_archive.close()
+		if settings["convert"] == "python":
+			convert_python(src_path, dest_path)
+		elif settings["convert"] == "dotnet":
+			convert_dotnet(src_path, dest_path)
+		else:
+			raise Exception("Unrecognized convert setting")
 
 		t_end = time.time()
 

@@ -3,9 +3,11 @@
 	"saves_folder_path": ".\\saves",
 	"json_folder_path": ".\\json",
 	"output_folder_path": ".\\output",
-	
+
 	"current": "mpdemocraticgekkotarepublic_-433043792",
 	
+	"convert": "python",
+
 	"render": {
 		"image": {
 			"size": [1500,1500],

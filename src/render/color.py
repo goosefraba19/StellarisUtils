@@ -58,7 +58,14 @@ random.seed(2)
 COUNTRY_OFFSETS = [(random.randint(-40,40), random.randint(-40,40), random.randint(-40,40)) for _ in range(500)]
 
 def _get_country_color(ctx, country):
-    color = get_color(ctx, country.flag.colors[1])
+    colors = country.flag.colors
+
+    color = (0,0,0)
+    if len(colors) == 1:
+        color = get_color(ctx, country.flag.colors[0])
+    elif len(colors) > 1:
+        color = get_color(ctx, country.flag.colors[1])
+
 
     if color == None:
         return None

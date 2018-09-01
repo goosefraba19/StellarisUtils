@@ -15,6 +15,16 @@ from .species import Species
 from .starbase import Starbase
 from .system import System
 
+def get_savefile_data(path):
+    archive = zipfile.ZipFile(path)
+    with archive.open("gamestate") as file:
+        return file.read().decode("utf-8")
+
+def get_jsonzip_data(path):
+    archive = zipfile.ZipFile(path)
+    with archive.open("gamestate.json") as file:
+        return json.load(file)
+
 class Model:
 
     @staticmethod
@@ -29,20 +39,12 @@ class Model:
     @staticmethod
     def from_savefile(path):
         parser = Parser()
-        
-        archive = zipfile.ZipFile(path)
-        with archive.open("gamestate") as file:
-            data = file.read().decode("utf-8")
-            parser.input(data)
-
-        obj = parser.parse()
-        return Model(obj)
+        parser.input(get_savefile_data(path))
+        return Model(parser.parse())
 
     @staticmethod
     def from_jsonzip(path):
-        archive = zipfile.ZipFile(path)
-        with archive.open("gamestate.json") as file:
-            return Model(json.load(file))
+        return Model(get_jsonzip_data(path))
 
     def __init__(self, obj):
 
@@ -249,8 +251,3 @@ class Model:
                 country.associated_alliance = alliance
                 alliance.associates.append(country)
             del country.associated_alliance_id
-
-            
-
-
-

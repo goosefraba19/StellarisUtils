@@ -18,20 +18,23 @@
 		"steps": [			
 			{ 
 				"key": "regions",
-				"voronoi_rings": [
-					{ "x": 0, "y": 0, "r": 100, "s": 5 },
-					{ "x": 0, "y": 0, "r": 480, "s": 2 },
-					{ "x": -400, "y": -420, "r": 80, "s": 15 }
-				],
-				"hyperlane_point_count": 2,
 				"fill": { 
 					"key": "blend",
 					"first": { "key": "system_owner" },
 					"second": { "key": "system_controller" },
 					"weight": 0.25
 				},
-				"debug": false,
-				"debug_color": [256,256,256]
+				"hyperlane_point_count": 4,
+				"voronoi_rings": {
+					"autogen": true,
+					"autogen_padding": 15,
+					"autogen_spacing": 5,
+					"list": [
+						{ "x": 0, "y": 0, "r": 0, "s": 0 }
+					],
+					"debug": false,
+					"debug_color": [256,256,256]
+				}
 			},
 			{
 				"key": "hyperlanes",

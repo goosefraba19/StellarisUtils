@@ -10,13 +10,16 @@ class RegionsStep(RenderStep):
 		super().__init__("regions")
 
 	def run(self, ctx, config):
+
+		# the voronoi diagram is built from a list of points
 		points = []
 		system_indices = []
 		
+		# add points for every system
 		index = 0
 		for system in ctx.model.systems.values():
 			point = convert_position_to_point(ctx, system.pos)
-			points.append(list(point))			
+			points.append(list(point))
 			system_indices.append((system.id, index))
 			index += 1
 
@@ -29,6 +32,7 @@ class RegionsStep(RenderStep):
 					hyperlanes.append((src, dest))
 			exclude.add(system.id)
 
+		# add points for every hyperlane
 		h = config["hyperlane_point_count"] + 1
 		for (src, dest) in hyperlanes:
 			for weight in [x/h for x in range(1,h)]:
@@ -38,12 +42,30 @@ class RegionsStep(RenderStep):
 				))
 
 				points.append(list(point))
+				# tied to the nearest system
 				system = src if 0.5 < weight else dest
 				system_indices.append((system.id, index))
 				index += 1
 
-		for ring in config["voronoi_rings"]:
-			for angle in range(0, 365, ring["s"]):
+		# add points for rings
+		config_rings = config["voronoi_rings"]
+		for ring in self._get_rings(ctx, config_rings):
+			angle = 0
+			while angle < 360:
+				point = convert_position_to_point(ctx, (
+					ring["x"] + ring["r"] * math.cos(math.radians(angle)),
+					ring["y"] + ring["r"] * math.sin(math.radians(angle))
+				))
+
+				if config_rings["debug"]:
+					ctx.draw.point(point, fill=get_color(ctx, config_rings["debug_color"]))
+				
+				points.append(list(point))
+
+				angle += ring["s"]
+
+			"""
+			for angle in range(0, 360, ring["s"]):
 				point = convert_position_to_point(ctx, (
 					ring["x"] + ring["r"] * math.cos(math.radians(angle)),
 					ring["y"] + ring["r"] * math.sin(math.radians(angle))
@@ -52,25 +74,92 @@ class RegionsStep(RenderStep):
 				if config["debug"]:
 					ctx.draw.point(point, fill=get_color(ctx, config["debug_color"]))
 				
-				points.append(list(point))				
+				points.append(list(point))
+			"""
 		
+		# build diagram from points
 		vor = Voronoi(numpy.array(points))
 		
+		# render system regions
 		for (id, index) in system_indices:
 			system = ctx.model.systems[id]
 			color = get_color(ctx, config["fill"], { "system": system })
 			if color:
-				region = vor.regions[vor.point_region[index]]			
+				region = vor.regions[vor.point_region[index]]
 				self._render_region(ctx, vor, region, color)
 
 	def _render_region(self, ctx, vor, region, fill=None, outline=None):
 		if -1 in region:
 			return
 
-		points = []
-		for index in region:
-			vertex = vor.vertices[index]
-			points.append((int(vertex[0]), int(vertex[1])))		
+		points = [tuple(map(int, vor.vertices[index])) for index in region]
+		ctx.draw.polygon(points, fill=fill, outline=outline)
 
-		if points:
-			ctx.draw.polygon(points, fill=fill, outline=outline)
+	def _get_rings(self, ctx, config):
+		if config["autogen"]:
+			results = []
+			for group in self._get_connected_systems(ctx):
+				results += self._create_rings_for_group(ctx, config, group)
+			return results
+		else:
+			return config["list"]
+
+	def _get_connected_systems(self, ctx):
+		# https://www.geeksforgeeks.org/connected-components-in-an-undirected-graph/
+		systems = ctx.model.systems
+		visited = dict([(s.id, False) for s in systems.values()])
+
+		def dfs_util(id):
+			result = [id]
+			visited[id] = True
+			system = systems[id]
+			for hyperlane in system.hyperlanes:
+				if not visited[hyperlane.dest]:
+					result += dfs_util(hyperlane.dest)
+			return result
+
+		result = []
+
+		for id in systems.keys():
+			if not visited[id]:
+				result.append(dfs_util(id))
+
+		return result
+
+	def _create_rings_for_group(self, ctx, config, group):
+		if len(group) < 2:
+			return []
+
+		systems = [ctx.model.systems[id] for id in group]
+
+		# center point
+		c = (
+			sum([s.pos[0] for s in systems])/len(systems),
+			sum([s.pos[1] for s in systems])/len(systems)
+		)
+
+		# minimum and maximum radius from the center point
+		r_min = 10000
+		r_max = 0
+
+		for s in systems:
+			r = math.sqrt(math.pow(c[0]-s.pos[0], 2) + math.pow(c[1]-s.pos[1], 2))
+			r_min = min(r_min, r)
+			r_max = max(r_max, r)
+
+		# create rings
+		padding = config["autogen_padding"]
+		results = [self._create_ring(config, c, r_max + padding)]
+		if padding < r_min:
+			results.append(self._create_ring(config, c, r_min - padding))
+		return results
+
+	def _create_ring(self, config, c, r):
+		n = (2*math.pi*r) / config["autogen_spacing"]
+		s = 360/n
+		return { 
+			"x": c[0],
+			"y": c[1],
+			"r": r,
+			"s": s
+		}

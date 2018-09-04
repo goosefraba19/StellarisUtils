@@ -20,7 +20,7 @@ namespace Stellaris.Convert
             this.token = this.lexer.Token();
 
             var pairs = new List<Tuple<string, object>>();
-            while (!this.token.Type.Equals("eof"))
+            while (this.token.Type != TokenType.EOF)
             {
                 pairs.Add(this.ParsePair());
             }
@@ -30,22 +30,22 @@ namespace Stellaris.Convert
 
         private Tuple<string, object> ParsePair()
         {
-            if (this.token.Type.Equals("text"))
+            if (this.token.Type == TokenType.Text)
             {
                 var keyOrValue = this.token.Value;
 
                 this.token = this.lexer.Token();
-                if (this.token.Type.Equals("="))
+                if (this.token.Type == TokenType.Equals)
                 {
 
                     this.token = this.lexer.Token();
-                    if (this.token.Type.Equals("text"))
+                    if (this.token.Type == TokenType.Text)
                     {
                         var value = this.token.Value;
                         this.token = this.lexer.Token();
                         return new Tuple<string, object>(keyOrValue, value);
                     }
-                    else if (this.token.Type.Equals("{"))
+                    else if (this.token.Type == TokenType.LeftCurly)
                     {
                         return new Tuple<string, object>(keyOrValue, this.ParseObject());
                     }
@@ -53,14 +53,13 @@ namespace Stellaris.Convert
                     {
                         throw new InvalidOperationException();
                     }
-
                 }
                 else
                 {
                     return new Tuple<string, object>(null, keyOrValue);
                 }
             }
-            else if (this.token.Type.Equals("{"))
+            else if (this.token.Type == TokenType.LeftCurly)
             {
                 return new Tuple<string, object>(null, this.ParseObject());
             }
@@ -75,7 +74,7 @@ namespace Stellaris.Convert
             this.token = this.lexer.Token();
 
             var pairs = new List<Tuple<string, object>>();
-            while (!this.token.Type.Equals("}"))
+            while (this.token.Type != TokenType.RightCurly)
             {
                 pairs.Add(this.ParsePair());
             }

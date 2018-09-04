@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 
 namespace Stellaris.Convert
 {
@@ -30,7 +31,9 @@ namespace Stellaris.Convert
             {
                 var entry = archive.GetEntry("gamestate");
 
-                using (var reader = new StreamReader(entry.Open()))
+                using (var stream = entry.Open())
+                using (var buffered = new BufferedStream(stream))
+                using (var reader = new StreamReader(buffered))
                 {
                     var lexer = new Lexer(reader);
                     var parser = new Parser(lexer);

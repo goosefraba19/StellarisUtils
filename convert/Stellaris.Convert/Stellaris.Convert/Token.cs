@@ -6,15 +6,15 @@ namespace Stellaris.Convert
 {
     public struct Token
     {
-        public readonly string Type;
+        public readonly TokenType Type;
         public readonly string Value;
 
-        public Token(string type) : this(type, null) { }
+        public Token(TokenType type) : this(type, null) { }
 
-        public Token(string type, string value)
+        public Token(TokenType type, string value)
         {
             this.Type = type;
-            this.Value = value ?? "None";
+            this.Value = value;
         }
 
         public override string ToString()

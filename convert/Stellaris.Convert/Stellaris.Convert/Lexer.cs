@@ -11,6 +11,8 @@ namespace Stellaris.Convert
         private readonly StreamReader reader;
         private int next;
 
+        private StringBuilder builder = new StringBuilder();
+
         public Lexer(StreamReader reader)
         {
             this.reader = reader;
@@ -23,7 +25,7 @@ namespace Stellaris.Convert
             {
                 if (this.next == -1)
                 {
-                    return new Token("eof");
+                    return new Token(TokenType.EOF);
                 }
 
                 var c = (char)this.next;
@@ -37,20 +39,20 @@ namespace Stellaris.Convert
                         continue;
                     case '{':
                         this.next = this.reader.Read();
-                        return new Token("{");
+                        return new Token(TokenType.LeftCurly);
                     case '}':
                         this.next = this.reader.Read();
-                        return new Token("}");
+                        return new Token(TokenType.RightCurly);
                     case '=':
                         this.next = this.reader.Read();
-                        return new Token("=");
+                        return new Token(TokenType.Equals);
                     case '\"':
-                        return new Token("text", this.GetEscapedString());
+                        return new Token(TokenType.Text, this.GetEscapedString());
                 }
 
                 if (this.IsValidTextCharacter(c))
                 {
-                    return new Token("text", this.GetTextString(c));
+                    return new Token(TokenType.Text, this.GetTextString(c));
                 }
 
                 throw new Exception("Could not find matching token.");
@@ -72,8 +74,8 @@ namespace Stellaris.Convert
 
         private string GetTextString(char first)
         {
-            var builder = new StringBuilder();
-            builder.Append(first);
+            this.builder.Clear();
+            this.builder.Append(first);
 
             while (true)
             {
@@ -86,22 +88,23 @@ namespace Stellaris.Convert
                 char c = (char)this.next;
                 if (this.IsValidTextCharacter(c))
                 {
-                    builder.Append(c);
+                    this.builder.Append(c);
                 }
                 else
                 {
-                    return builder.ToString();
+                    return this.builder.ToString();
                 }
             }
         }
 
         private string GetEscapedString()
         {
-            var builder = new StringBuilder();
+            this.builder.Clear();
 
             while (true)
             {
                 this.next = this.reader.Read();
+
                 if (this.next == -1)
                 {
                     throw new Exception("ERROR: EOF in GetEscapedString?");
@@ -111,11 +114,11 @@ namespace Stellaris.Convert
                 if (c == '\"')
                 {
                     this.next = this.reader.Read();
-                    return builder.ToString();
+                    return this.builder.ToString();
                 }
                 else
                 {
-                    builder.Append(c);
+                    this.builder.Append(c);
                 }
             }
         }

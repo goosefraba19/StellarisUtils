@@ -1,12 +1,14 @@
 {
 	"stellaris_folder_path": "C:\\Users\\ebsan\\Documents\\Paradox Interactive\\Stellaris",
-	"saves_folder_path": ".\\saves",
-	"json_folder_path": ".\\json",
-	"output_folder_path": ".\\output",
+	"data": {
+		"saves": ".\\data\\{name}\\saves",
+		"json": ".\\data\\{name}\\json",
+		"output": ".\\data\\{name}\\output"
+	},
 
-	"current": "mpdemocraticgekkotarepublic_-433043792",
+	"current": "kaduastellarindustries_-168912120",
 	
-	"convert": "python",
+	"convert": "dotnet",
 
 	"render": {
 		"image": {
@@ -15,7 +17,7 @@
 			"color": [0,0,0],
 			"scale": 1.5
 		},
-		"steps": [			
+		"steps": [
 			{ 
 				"key": "regions",
 				"fill": { 

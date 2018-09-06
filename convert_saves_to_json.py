@@ -1,7 +1,7 @@
 import json, os, subprocess, time, zipfile
 
-from src.files import get_settings, get_jsonzip_folder_path, list_savefile_paths
-from src.parse import Parser
+from stellaris.files import get_settings, get_jsonzip_folder_path, list_savefile_paths
+from stellaris.parse import Parser
 
 def get_pairs():
 	dest_folder_path = get_jsonzip_folder_path()

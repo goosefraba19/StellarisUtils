@@ -10,7 +10,7 @@ class Render:
 		self._load_step_handlers()
 
 	def _load_step_handlers(self):
-		import src.render.step
+		import stellaris.render.step
 		self._step_handlers = {}
 		for c in RenderStep.__subclasses__():
 			i = c()

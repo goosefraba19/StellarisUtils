@@ -1,6 +1,6 @@
-from src.files import get_settings, list_jsonzip_paths
-from src.model import Model
-from src.statistics import GalaxyCounts, CountryCounts, SpeciesCounts
+from stellaris.files import get_settings, list_jsonzip_paths
+from stellaris.model import Model
+from stellaris.statistics import GalaxyCounts, CountryCounts, SpeciesCounts
 
 def main():
 	stats = [

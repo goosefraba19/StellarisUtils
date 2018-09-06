@@ -1,8 +1,8 @@
 import os, time
 
-from src.files import get_settings, list_jsonzip_paths, get_output_folder_path
-from src.model import Model
-from src.render import Render
+from stellaris.files import get_settings, list_jsonzip_paths, get_output_folder_path
+from stellaris.model import Model
+from stellaris.render import Render
 
 def get_pairs():
 	dest_folder_path = os.path.join(get_output_folder_path(), "images")

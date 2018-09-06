@@ -4,13 +4,17 @@ A collection of scripts that I use to analyze and visualize my Stellaris playthr
 
 Here's an [example timelapse](https://i.imgur.com/NCAWqlG.gifv) made using this project.
 
+
+
 ## Dependencies
 
-Make sure that Python 3.7 is installed, along with these packages:
+These scripts are to be run in Python 3.7, and depend on these packages:
 
 - [Pillow](https://pypi.org/project/Pillow/) (5.2.0)
 - [numpy](https://pypi.org/project/numpy/) (1.15.0)
 - [scipy](https://pypi.org/project/scipy/) (1.1.0)
+
+You can ensure these packages are installed by running "python setup.py install" in the project's folder.
 
 ## How to Make Timelapses
 
@@ -22,14 +26,13 @@ The process I've developed for making timelapses consists of four steps: acquiri
 
 ![](https://i.imgur.com/OJYazdU.png)
 
-This script is run in the background while you are playing Stellaris and periodically checks the entire "save games" folder for new autosave files. It then copies those new files into the saves folder for the project. 
+This script should be run in the background while you play Stellaris and periodically checks the entire "save games" folder for new autosave files and updated ironman files. The script copies these new files into the "data" folder for the project. 
 
-There are some values in **settings.json** that you need to verify in order for this script to work. 
- * "stellaris_folder_path" must point to the folder where Stellaris stores all your current data, which contains these folders and files:
+In order for this script to work, you need to set a value in **settings.json**. The property *stellaris_folder_path* must point to the folder where Stellaris stores all your data. On Windows, it should be "C:\\Users\\&lt;USERNAME&gt;\\Documents\\Paradox Interactive\\Stellaris", and should contain these folders and files:
 
 ![](https://i.imgur.com/foimXIN.png)
 
- * "saves_folder_path" is the folder where all the copied savefiles will end up. You can leave this with the default value.
+
 
 ### 2. Converting Savefiles
 
@@ -39,38 +42,25 @@ There are some values in **settings.json** that you need to verify in order for 
 
 This script converts the savefiles for a specific game from their native format into a zipped JSON file. This is done to speed up the later steps, since Python's JSON parser is much quicker than my own savefile parser. When run, the script ignores savefiles that have already been converted.
 
-**NOTE**: This step will probably take a long time to complete!
+**NOTE**: This step will take a long time to complete!
 
-The key values in **settings.json** that you should verify are:
+This script relies on the *current* property in **settings.json** to determine which savefiles to convert. Make sure the *current* property has the correct value for the game you are converting, i.e. if you want to covert all the savefiles in "data\\primesequence_-499848856\\saves", then *current* should have the value "primesequence_-499848856".
 
-* "current" is the name of the subfolder on which the script will operate. The script will look for new savefiles in "&lt;saves_folder_path&gt;/&lt;current&gt;" and place the converted files in "&lt;json_folder_path&gt;/&lt;current&gt;".
+With the default settings, the converted savefiles will end up in a "json" folder in the current game's folder, i.e. "data\\primesequence_-499848856\\json".
 
-* "saves_folder_path" should still be the folder where all the copied savefiles ended up from the previous step.
-
-* "json_folder_path" is the folder where the converted files will end up. You can leave this with the default value.
 
 
 ### 3. Rendering Images
 
 **render_latest.py** & **render_all.py**
 
-There are two scripts for rendering images. Use **render_latest.py** to evaluate the current settings and adjust accordingly, and once you're happy run **render_all.py**. All the images are saved in the output folder.
+There are two scripts for rendering images. Use **render_latest.py** to evaluate the current settings and adjust accordingly, and once you're happy run **render_all.py**. All the images are saved in an "output" folder in the current game's folder.
 
-The key values in **settings.json** that you should focus on are:
+As with the previous step, ensure that the *current* property in **settings.json** has the correct value before running these scripts.
 
-* "current" should still be the same from the previous step.
+In **settings.json**, the *render* property controls the rendering process. It specifies the image size and scale, the rendering steps, and color configurations. The only settings you will need to tweak are the image size, center, and scale. Adjust the settings, running **render_latest.py** after each change, and evaluate the result in the "output" folder. If the script is reporting missing colors, add them to the *color* list in *render* and feel free to let me know they're missing. Once you're satisfied with the latest image, go ahead and run **render_all.py** to generate an image for every converted savefile.
 
-* "output_folder_path" is where all the rendered images are saved. You can leave this with the default value.
 
-* "render" holds all the details used to produce the images.
-
-**settings.json: "render"**
-
-While working with **render_latest.py**, expect to modify the "render" section multiple times before finding the correct settings. Adjust the "image" subsection's "size", "center", and "scale" values so that the galaxy fits nicely inside the image. If the script is reporting missing colors, add them to the "color" subsection and feel free to let me know they're missing.
-
-The "steps" subsection describes the rendering steps. The default settings renders regions, hyperlanes, pops, and then the date in the upper-left corner. Each step also contains settings controlling how they operate.
-
-Once you are happy with the render settings, go ahead and run **render_all.py** to generate an image for every converted savefile in the current game's json folder.
 
 ### 4. Generating Animation
 

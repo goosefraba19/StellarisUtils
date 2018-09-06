@@ -1,5 +1,5 @@
-from src.files import list_jsonzip_paths
-from src.model import Model
+from stellaris.files import list_jsonzip_paths
+from stellaris.model import Model
 
 def main():
     countries = {}

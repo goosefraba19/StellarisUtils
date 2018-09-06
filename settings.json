@@ -6,9 +6,9 @@
 		"output": ".\\data\\{name}\\output"
 	},
 
-	"current": "kaduastellarindustries_-168912120",
+	"current": "mpdemocraticgekkotarepublic_-433043792",
 	
-	"convert": "dotnet",
+	"convert": "python",
 
 	"render": {
 		"image": {

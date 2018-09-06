@@ -1,7 +1,7 @@
 import json, os, subprocess, time, zipfile
 
 from stellaris.files import get_settings, get_jsonzip_folder_path, list_savefile_paths
-from stellaris.parse import Parser
+from stellaris.parse import Lexer, Parser
 
 def get_pairs():
 	dest_folder_path = get_jsonzip_folder_path()
@@ -17,14 +17,14 @@ def get_pairs():
 			yield (name, src_path, dest_path)
 
 def convert_python(src_path, dest_path):
-	parser = Parser()
+	lexer = Lexer()
 
 	src_archive = zipfile.ZipFile(src_path)
 	with src_archive.open("gamestate") as file:
 		data = file.read().decode("utf-8")
-		parser.input(data)
+		lexer.input(data)
 
-	obj = parser.parse()
+	obj = Parser(lexer).parse()
 
 	dest_archive = zipfile.ZipFile(dest_path, mode="w", compression=zipfile.ZIP_DEFLATED)
 	dest_archive.writestr("gamestate.json", json.dumps(obj))

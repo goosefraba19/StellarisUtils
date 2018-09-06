@@ -4,9 +4,10 @@ setup(
     name="StellarisUtils",
     version="0.1.0",
     packages=[
-        # "stellaris",
-        # "stellaris.model",
-        # "stellaris.render"
+         "stellaris",
+         "stellaris.model",
+         "stellaris.parse",
+         "stellaris.render"
     ],
     install_requires=[
         "Pillow",

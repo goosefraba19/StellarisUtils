@@ -1,6 +1,6 @@
 import json, zipfile
 
-from ..parse import Parser
+from ..parse import Lexer, Parser
 
 from .alliance import Alliance
 from .country import Country
@@ -38,9 +38,9 @@ class Model:
 
     @staticmethod
     def from_savefile(path):
-        parser = Parser()
-        parser.input(get_savefile_data(path))
-        return Model(parser.parse())
+        lexer = Lexer()
+        lexer.input(get_savefile_data(path))
+        return Model(Parser(lexer).parse())
 
     @staticmethod
     def from_jsonzip(path):

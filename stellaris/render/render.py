@@ -26,8 +26,8 @@ class Render:
 			else:
 				print(f"Error: unrecognized step '{key}'.")
 	
-	def export(self, path):
-		self._image.save(path)
+	def export(self, path, format=None):
+		self._image.save(path, format)
 
 class RenderStep:
 	def __init__(self, name):

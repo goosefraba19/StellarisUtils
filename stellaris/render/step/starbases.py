@@ -8,8 +8,9 @@ class StarbasesStep(RenderStep):
 		super().__init__("starbases")
 	
 	def run(self, ctx, config):
+		scale = ctx.config["image"]["scale"] 
 		for system in ctx.model.systems.values():
-			r = self._get_starbase_size(config, system.starbase)
+			r = int(scale * self._get_starbase_size(config, system.starbase))
 			if r != 0:
 				p = convert_position_to_point(ctx, system.pos)
 				ctx.draw.ellipse(

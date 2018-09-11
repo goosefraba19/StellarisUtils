@@ -45,7 +45,7 @@
 			},
 			{
 				"key": "pops",
-				"scale": 2.25,
+				"scale": 2.00,
 				"fill": {
 					"key": "blend",
 					"first": { "key": "system_owner" },

@@ -75,6 +75,7 @@
 				"fill": [256,256,256]
 			}
 		],		
+		"country_offset_seed": 2,
 		"use_federation_or_overlord_color": false,
 		"color": {
 			"blue": [0,0,256],

@@ -54,8 +54,6 @@ def _get_color_system_controller(ctx, obj, args):
     else:
         return None
 
-random.seed(2)
-COUNTRY_OFFSETS = [(random.randint(-40,40), random.randint(-40,40), random.randint(-40,40)) for _ in range(500)]
 
 def _get_country_color(ctx, country):
     colors = country.flag.colors
@@ -72,7 +70,7 @@ def _get_country_color(ctx, country):
 
     offset = (0,0,0)
     try:
-        offset = COUNTRY_OFFSETS[int(country.id)]					
+        offset = _get_country_offset(ctx, country)
     except IndexError:
         offset = (0,0,0)
 
@@ -93,6 +91,17 @@ def _get_country_color(ctx, country):
             return blend_colors(base_color, color, 0.75)
     else:
         return color
+
+_country_offsets = None
+
+def _get_country_offset(ctx, country):
+    global _country_offsets
+
+    if _country_offsets == None:
+        random.seed(ctx.config["country_offset_seed"])
+        _country_offsets = [(random.randint(-40,40), random.randint(-40,40), random.randint(-40,40)) for _ in range(500)]
+
+    return _country_offsets[int(country.id)]
 
 def blend_colors(first, second, weight):
     if first != None and second != None:

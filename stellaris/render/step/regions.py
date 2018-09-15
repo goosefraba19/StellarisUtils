@@ -5,12 +5,63 @@ from ..render import RenderStep
 from ..color import get_color
 from ..utils import convert_position_to_point
 
+
+
 class RegionsStep(RenderStep):
+
 	def __init__(self):
 		super().__init__("regions")
 
 	def run(self, ctx, config):
+		(vor, system_indices) = self._build_voronoi(ctx, config)
 
+		edge_systems = {}
+		
+		# render system regions and collect border data
+		for (id, index) in system_indices:
+			system = ctx.model.systems[id]
+			region = vor.regions[vor.point_region[index]]
+			color = get_color(ctx, config["fill"], { "system": system })
+			if color:
+				self._render_region(ctx, vor, region, color)
+
+			edges = [tuple(sorted([region[i], region[i+1]])) for i in range(-1, len(region)-1)]
+			for edge in edges:
+				if edge not in edge_systems:
+					edge_systems [edge] = set()
+				edge_systems[edge].add(system)
+
+		# render borders
+		for (edge, systems) in edge_systems.items():
+
+			owners = set()
+			for system in systems:
+				if system.starbase:
+					owners.add(system.starbase.owner)
+				else:
+					owners.add(None)
+
+			if 1 < len(owners):
+				vertices = [vor.vertices[index] for index in edge]
+				points = [tuple(map(int, v)) for v in vertices]
+
+				width = config["border"]["width"]
+				fill = get_color(ctx, config["border"]["fill"])
+
+				ctx.draw.line(points, fill=fill, width=width)
+				self._draw_circle(ctx.draw, points[0], fill, width/2)
+				self._draw_circle(ctx.draw, points[1], fill, width/2)
+				
+	def _draw_circle(self, draw, center, fill, radius):
+		points = (
+			center[0] - radius + 1,
+			center[1] - radius + 1,
+			center[0] + radius - 1,
+			center[1] + radius - 1
+		)
+		draw.ellipse(points, fill=fill)
+
+	def _build_voronoi(self, ctx, config):
 		# the voronoi diagram is built from a list of points
 		points = []
 		system_indices = []
@@ -63,35 +114,15 @@ class RegionsStep(RenderStep):
 				points.append(list(point))
 
 				angle += ring["s"]
-
-			"""
-			for angle in range(0, 360, ring["s"]):
-				point = convert_position_to_point(ctx, (
-					ring["x"] + ring["r"] * math.cos(math.radians(angle)),
-					ring["y"] + ring["r"] * math.sin(math.radians(angle))
-				))
-				
-				if config["debug"]:
-					ctx.draw.point(point, fill=get_color(ctx, config["debug_color"]))
-				
-				points.append(list(point))
-			"""
 		
 		# build diagram from points
 		vor = Voronoi(numpy.array(points))
-		
-		# render system regions
-		for (id, index) in system_indices:
-			system = ctx.model.systems[id]
-			color = get_color(ctx, config["fill"], { "system": system })
-			if color:
-				region = vor.regions[vor.point_region[index]]
-				self._render_region(ctx, vor, region, color)
+
+		return (vor, system_indices)
 
 	def _render_region(self, ctx, vor, region, fill=None, outline=None):
 		if -1 in region:
 			return
-
 		points = [tuple(map(int, vor.vertices[index])) for index in region]
 		ctx.draw.polygon(points, fill=fill, outline=outline)
 

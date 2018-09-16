@@ -32,8 +32,8 @@ class RegionsStep(RenderStep):
                     weight * hyperlane.src.pos[0] + (1 - weight) * hyperlane.dest.pos[0],
                     weight * hyperlane.src.pos[1] + (1 - weight) * hyperlane.dest.pos[1]
                 ))
-
                 points.append(list(point))
+
                 # tied to the nearest system
                 system = hyperlane.src if 0.5 < weight else hyperlane.dest
                 system_indices.append((system.id, index))
@@ -59,7 +59,7 @@ class RegionsStep(RenderStep):
         # build diagram from points
         vor = scipy.spatial.Voronoi(numpy.array(points))
 
-        ctx.data[config["output"]] = (vor, system_indices)
+        ctx.data[config["output"]] = Voronoi(ctx, vor, system_indices)
 
 
 
@@ -138,3 +138,23 @@ class RegionsStep(RenderStep):
             "r": radius,
             "s": s
         }
+
+
+
+class Voronoi:
+    def __init__(self, ctx, vor, system_indices):
+        self._vor = vor
+
+        self.regions = []
+
+        for (system_id, i) in system_indices:
+            region = vor.regions[vor.point_region[i]]
+            if -1 not in region:
+                system = ctx.model.systems[system_id]
+                vertices = [tuple(vor.vertices[j]) for j in region]
+                self.regions.append(Region(system, vertices))
+
+class Region:
+    def __init__(self, system, vertices):
+        self.system = system
+        self.vertices = vertices

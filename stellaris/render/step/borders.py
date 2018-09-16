@@ -12,17 +12,16 @@ class RegionsStep(RenderStep):
         super().__init__("borders")
 
     def run(self, ctx, config):
-        (vor, system_indices) = ctx.data[config["input"]]
+        vor = ctx.data[config["input"]]
 
         edge_systems = defaultdict(list)
 
-        for (id, index) in system_indices:
-            system = ctx.model.systems[id]
-            region = vor.regions[vor.point_region[index]]
-
-            edges = [tuple(sorted([region[i], region[i+1]])) for i in range(-1, len(region)-1)]
+        for region in vor.regions:
+            vertices = region.vertices
+            edges = [tuple(sorted([vertices[i], vertices[i+1]])) for i in range(-1, len(vertices)-1)]
             for edge in edges:
-                edge_systems[edge].append(system)
+                edge_systems[edge].append(region.system)
+            
 
         for (edge, systems) in edge_systems.items():
 
@@ -37,8 +36,7 @@ class RegionsStep(RenderStep):
             is_border = 1 < len(owners)
 
             if is_border or is_rim_controlled:
-                vertices = [vor.vertices[index] for index in edge]
-                points = [tuple(map(int, v)) for v in vertices]
+                points = [tuple(map(int, v)) for v in edge]
 
                 width = config["width"]
                 fill = get_color(ctx, config["fill"])

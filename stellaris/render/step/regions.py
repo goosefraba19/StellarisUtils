@@ -2,8 +2,6 @@ from ..render import RenderStep
 from ..color import get_color
 from ..utils import convert_position_to_point
 
-
-
 class RegionsStep(RenderStep):
 
 	def __init__(self):

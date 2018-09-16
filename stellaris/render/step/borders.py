@@ -4,8 +4,6 @@ from ..utils import convert_position_to_point
 
 from collections import defaultdict
 
-
-
 class RegionsStep(RenderStep):
 
     def __init__(self):

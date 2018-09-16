@@ -11,7 +11,7 @@ class RegionsStep(RenderStep):
         super().__init__("voronoi")
 
     def run(self, ctx, config):
-        # the voronoi diagram is built from a list of points
+        # the voronoi diagram is built from a list of vertices
         vertices = []
         system_indices = []
         

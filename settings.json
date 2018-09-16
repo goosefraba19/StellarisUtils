@@ -18,20 +18,10 @@
 			"scale": 1.5
 		},
 		"steps": [
-			{ 
-				"key": "regions",
-				"fill": { 
-					"key": "blend",
-					"first": { "key": "system_owner" },
-					"second": { "key": "system_controller" },
-					"weight": 0.25
-				},
-				"border": {
-					"width": 6,
-					"fill": [0,0,0]
-				},
-				"hyperlane_point_count": 2,
-				"voronoi_rings": {
+			{
+				"key": "voronoi",
+				"hyperlane_point_count": 4,
+				"rings": {
 					"autogen": true,
 					"autogen_padding": 15,
 					"autogen_spacing": 5,
@@ -40,7 +30,24 @@
 					],
 					"debug": false,
 					"debug_color": [256,256,256]
+				},
+				"output": "voronoi"
+			},
+			{
+				"key": "regions",
+				"input": "voronoi",
+				"fill": { 
+					"key": "blend",
+					"first": { "key": "system_owner" },
+					"second": { "key": "system_controller" },
+					"weight": 0.25
 				}
+			},
+			{
+				"key": "borders",
+				"input": "voronoi",
+				"width": 4,
+				"fill": [0,0,0]
 			},
 			{
 				"key": "hyperlanes",

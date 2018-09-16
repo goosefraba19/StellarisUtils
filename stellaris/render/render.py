@@ -40,3 +40,4 @@ class RenderContext:
 		self.config = config
 		self.model = model
 		self.draw = draw
+		self.data = {}

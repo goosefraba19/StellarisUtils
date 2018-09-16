@@ -5,7 +5,7 @@ class System:
         self.id = id
         self.name = getitem_or_default(value, "name", None)
         self.pos = (float(value["coordinate"]["x"]), float(value["coordinate"]["y"]))
-        self.hyperlanes = [Hyperlane(self.id, x["to"], float(x["length"])) for x in getitem_or_default(value, "hyperlane", [])]
+        self.hyperlanes = [Hyperlane(self, x["to"], float(x["length"])) for x in getitem_or_default(value, "hyperlane", [])]
 
 
 
@@ -31,7 +31,24 @@ class System:
 
 
 class Hyperlane:
-    def __init__(self, src, dest, length):
+    def __init__(self, src, dest_id, length):
         self.src = src
-        self.dest = dest
         self.length = length
+
+        # relationships
+        self.dest = None
+
+        self.dest_id = dest_id
+
+    def __str__(self):
+        return f"Hyperlane({self.src.id},{self.dest.id})"
+
+    def __key(self):
+        ids = list(sorted([self.src.id, self.dest.id]))
+        return (ids[0], ids[1], self.length)
+
+    def __eq__(self, other):
+        return isinstance(other, type(self)) and self.__key() == other.__key()
+
+    def __hash__(self):
+        return hash(self.__key())

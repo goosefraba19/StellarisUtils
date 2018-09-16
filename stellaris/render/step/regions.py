@@ -74,27 +74,20 @@ class RegionsStep(RenderStep):
 			system_indices.append((system.id, index))
 			index += 1
 
-		hyperlanes = []
-		exclude = set()
-		for src in ctx.model.systems.values():
-			for hyperlane in src.hyperlanes:
-				if hyperlane.dest not in exclude:
-					dest = ctx.model.systems[hyperlane.dest]
-					hyperlanes.append((src, dest))
-			exclude.add(system.id)
 
 		# add points for every hyperlane
-		h = config["hyperlane_point_count"] + 1
-		for (src, dest) in hyperlanes:
-			for weight in [x/h for x in range(1,h)]:
+		c = config["hyperlane_point_count"] + 1
+		hyperlanes = set([h for s in ctx.model.systems.values() for h in s.hyperlanes])
+		for hyperlane in hyperlanes:
+			for weight in [x/c for x in range(1,c)]:
 				point = convert_position_to_point(ctx, (
-					weight * src.pos[0] + (1 - weight) * dest.pos[0],
-					weight * src.pos[1] + (1 - weight) * dest.pos[1]
+					weight * hyperlane.src.pos[0] + (1 - weight) * hyperlane.dest.pos[0],
+					weight * hyperlane.src.pos[1] + (1 - weight) * hyperlane.dest.pos[1]
 				))
 
 				points.append(list(point))
 				# tied to the nearest system
-				system = src if 0.5 < weight else dest
+				system = hyperlane.src if 0.5 < weight else hyperlane.dest
 				system_indices.append((system.id, index))
 				index += 1
 
@@ -145,8 +138,8 @@ class RegionsStep(RenderStep):
 			visited[id] = True
 			system = systems[id]
 			for hyperlane in system.hyperlanes:
-				if not visited[hyperlane.dest]:
-					result += dfs_util(hyperlane.dest)
+				if not visited[hyperlane.dest.id]:
+					result += dfs_util(hyperlane.dest.id)
 			return result
 
 		result = []
@@ -180,17 +173,18 @@ class RegionsStep(RenderStep):
 
 		# create rings
 		padding = config["autogen_padding"]
-		results = [self._create_ring(config, c, r_max + padding)]
+		spacing = config["autogen_spacing"]
+		results = [self._create_ring(c, r_max + padding, spacing)]
 		if padding < r_min:
-			results.append(self._create_ring(config, c, r_min - padding))
+			results.append(self._create_ring(c, r_min - padding, spacing))
 		return results
 
-	def _create_ring(self, config, c, r):
-		n = (2*math.pi*r) / config["autogen_spacing"]
+	def _create_ring(self, center, radius, spacing):
+		n = (2*math.pi*radius) / spacing
 		s = 360/n
 		return { 
-			"x": c[0],
-			"y": c[1],
-			"r": r,
+			"x": center[0],
+			"y": center[1],
+			"r": radius,
 			"s": s
 		}

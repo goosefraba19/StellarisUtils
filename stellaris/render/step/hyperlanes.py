@@ -7,20 +7,13 @@ class HyperlaneStep(RenderStep):
 		super().__init__("hyperlanes")
 
 	def run(self, ctx, config):
-		exclude = set()
-		for src in ctx.model.systems.values():
-			for hyperlane in src.hyperlanes:
-				if hyperlane.dest in exclude:
-					continue
-				
-				dest = ctx.model.systems[hyperlane.dest]
-				a = convert_position_to_point(ctx, src.pos)
-				b = convert_position_to_point(ctx, dest.pos)
-				ctx.draw.line(
-					(a[0],a[1],b[0],b[1]), 
-					fill=get_color(ctx, config["fill"]),
-					width=config["width"]
-				)
 
-			exclude.add(src.id)
-			
+		hyperlanes = set([h for s in ctx.model.systems.values() for h in s.hyperlanes])
+		for hyperlane in hyperlanes:
+			src = convert_position_to_point(ctx, hyperlane.src.pos)
+			dest = convert_position_to_point(ctx, hyperlane.dest.pos)
+			ctx.draw.line(
+				(src[0],src[1],dest[0],dest[1]), 
+				fill=get_color(ctx, config["fill"]),
+				width=config["width"]
+			)

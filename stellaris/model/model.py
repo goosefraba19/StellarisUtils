@@ -55,6 +55,12 @@ class Model:
 
         # create systems
         self.systems = dict([(k, System(k,v)) for k,v in obj["galactic_object"].items()])
+
+        # finalize hyperlanes
+        for system in self.systems.values():
+            for hyperlane in system.hyperlanes:
+                hyperlane.dest = self.systems[hyperlane.dest_id]
+                del hyperlane.dest_id
     
         # create starbases
         self.starbases = dict([(k, Starbase(k,v)) for k,v in obj["starbases"].items() if v != "none"])

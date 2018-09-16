@@ -12,52 +12,51 @@ class RegionsStep(RenderStep):
 
     def run(self, ctx, config):
         # the voronoi diagram is built from a list of points
-        points = []
+        vertices = []
         system_indices = []
         
-        # add points for every system
+        # add vertices for every system
         index = 0
         for system in ctx.model.systems.values():
-            point = convert_position_to_point(ctx, system.pos)
-            points.append(list(point))
+            vertices.append(list(system.pos))
             system_indices.append((system.id, index))
             index += 1
 
-        # add points for every hyperlane
+        # add vertices for every hyperlane
         c = config["hyperlane_point_count"] + 1
         hyperlanes = set([h for s in ctx.model.systems.values() for h in s.hyperlanes])
         for hyperlane in hyperlanes:
             for weight in [x/c for x in range(1,c)]:
-                point = convert_position_to_point(ctx, (
+                vertices.append([
                     weight * hyperlane.src.pos[0] + (1 - weight) * hyperlane.dest.pos[0],
                     weight * hyperlane.src.pos[1] + (1 - weight) * hyperlane.dest.pos[1]
-                ))
-                points.append(list(point))
+                ])
 
                 # tied to the nearest system
                 system = hyperlane.src if 0.5 < weight else hyperlane.dest
                 system_indices.append((system.id, index))
                 index += 1
 
-        # add points for rings
+        # add vertices for rings
         config_rings = config["rings"]
         for ring in self._get_rings(ctx, config_rings):
             angle = 0
             while angle < 360:
-                point = convert_position_to_point(ctx, (
+                vertex = [
                     ring["x"] + ring["r"] * math.cos(math.radians(angle)),
                     ring["y"] + ring["r"] * math.sin(math.radians(angle))
-                ))
+                ]
 
                 if config_rings["debug"]:
+                    point = convert_position_to_point(ctx, vertex)
                     ctx.draw.point(point, fill=get_color(ctx, config_rings["debug_color"]))
                 
-                points.append(list(point))
+                vertices.append(list(vertex))
 
                 angle += ring["s"]
         
-        # build diagram from points
-        vor = scipy.spatial.Voronoi(numpy.array(points))
+        # build diagram from vertices
+        vor = scipy.spatial.Voronoi(numpy.array(vertices))
 
         ctx.data[config["output"]] = Voronoi(ctx, vor, system_indices)
 
@@ -104,13 +103,13 @@ class RegionsStep(RenderStep):
 
         systems = [ctx.model.systems[id] for id in group]
 
-        # center point
+        # center
         c = (
             sum([s.pos[0] for s in systems])/len(systems),
             sum([s.pos[1] for s in systems])/len(systems)
         )
 
-        # minimum and maximum radius from the center point
+        # minimum and maximum radius from the center
         r_min = 10000
         r_max = 0
 
@@ -143,8 +142,6 @@ class RegionsStep(RenderStep):
 
 class Voronoi:
     def __init__(self, ctx, vor, system_indices):
-        self._vor = vor
-
         self.regions = []
 
         for (system_id, i) in system_indices:

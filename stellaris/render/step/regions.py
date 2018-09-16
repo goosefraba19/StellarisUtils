@@ -14,5 +14,5 @@ class RegionsStep(RenderStep):
 		for region in vor.regions:
 			color = get_color(ctx, config["fill"], { "system": region.system })
 			if color:
-				points = [tuple(map(int, v)) for v in region.vertices]
+				points = [convert_position_to_point(ctx, v) for v in region.vertices]
 				ctx.draw.polygon(points, fill=color)

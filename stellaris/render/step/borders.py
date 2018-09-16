@@ -22,6 +22,8 @@ class RegionsStep(RenderStep):
             for edge in edges:
                 edge_systems[edge].append(region.system)
             
+        width = config["width"]
+        fill = get_color(ctx, config["fill"])
 
         for (edge, systems) in edge_systems.items():
 
@@ -36,11 +38,7 @@ class RegionsStep(RenderStep):
             is_border = 1 < len(owners)
 
             if is_border or is_rim_controlled:
-                points = [tuple(map(int, v)) for v in edge]
-
-                width = config["width"]
-                fill = get_color(ctx, config["fill"])
-
+                points = [convert_position_to_point(ctx, v) for v in edge]
                 ctx.draw.line(points, fill=fill, width=width)
                 self._draw_circle(ctx.draw, points[0], fill, width/2)
                 self._draw_circle(ctx.draw, points[1], fill, width/2)

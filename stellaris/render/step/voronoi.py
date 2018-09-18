@@ -23,9 +23,13 @@ class RegionsStep(RenderStep):
             index += 1
 
         # add vertices for every hyperlane
-        c = config["hyperlane_point_count"] + 1
         hyperlanes = set([h for s in ctx.model.systems.values() for h in s.hyperlanes])
         for hyperlane in hyperlanes:
+
+            c = int(hyperlane.length / config["hyperlane_point_spacing"])
+            if c%2 == 0:
+                c += 1
+
             for weight in [x/c for x in range(1,c)]:
                 vertices.append([
                     weight * hyperlane.src.pos[0] + (1 - weight) * hyperlane.dest.pos[0],

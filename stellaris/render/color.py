@@ -26,6 +26,8 @@ def get_color(ctx, obj, args={}):
             return _get_color_system_owner(ctx, obj, args)
         elif obj["key"] == "system_controller":
             return _get_color_system_controller(ctx, obj, args)
+        elif obj["key"] == "random":
+            return (random.randint(1,256), random.randint(1,256), random.randint(1,256))
         else:
             print(f"WARNING: Key '{obj['key']}' not recognized.")
             return None

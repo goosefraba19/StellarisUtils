@@ -20,7 +20,7 @@
 		"steps": [
 			{
 				"key": "voronoi",
-				"hyperlane_point_count": 4,
+				"hyperlane_point_spacing": 8,
 				"rings": {
 					"autogen": true,
 					"autogen_padding": 15,
@@ -38,7 +38,11 @@
 				"input": "voronoi",
 				"fill": { 
 					"key": "blend",
-					"first": { "key": "system_owner" },
+					"first": { 
+						"key": "or",
+						"first": { "key": "system_owner" },
+						"second": [0,0,0]
+					},
 					"second": { "key": "system_controller" },
 					"weight": 0.25
 				}

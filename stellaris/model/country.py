@@ -3,6 +3,7 @@ from .utils import getitem_or_default
 class Country:
     def __init__(self, id, value):
         self.id = id
+
         self.type = getitem_or_default(value, "type", None)
         self.name = getitem_or_default(value, "name", None)
         self.adjective = getitem_or_default(value, "adjective", None) 

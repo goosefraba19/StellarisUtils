@@ -170,7 +170,7 @@ class Model:
         # create leaders
         self.leaders = dict([(k, Leader(k,v)) for k,v in obj["leaders"].items() if v != "none"])
 
-        # ilnk leaders and species
+        # link leaders and species
         for leader in self.leaders.values():
             s = species[leader.species_index]
             leader.species = s

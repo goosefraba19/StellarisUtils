@@ -15,10 +15,25 @@ class Leader:
         else:
             self.name = None
 
+        self.portrait = getitem_or_default(value, "portrait", None)
         self.gender = getitem_or_default(value, "gender", None)
+        self.age = int(getitem_or_default(value, "age", 0))
+
+        self.level = int(getitem_or_default(value, "level", 0))
+        self.experience = float(getitem_or_default(value, "experience", 0.0))
 
         self.role = getitem_or_default(value, "class", None)
-        self.level = int(getitem_or_default(value, "level", 0))
+        self.agenda = getitem_or_default(value, "agenda", None)
+
+        self.traits = []
+        if "roles" in value:
+            role = value["roles"][self.role]
+            if "traits" in role:
+                self.traits = role["traits"]
+
+        self.mandate = None
+        if "mandate" in value:
+            self.mandate = value["mandate"]["type"]
 
 
 

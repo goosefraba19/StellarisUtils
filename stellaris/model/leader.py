@@ -27,9 +27,11 @@ class Leader:
 
         self.traits = []
         if "roles" in value:
-            role = value["roles"][self.role]
-            if "traits" in role:
-                self.traits = role["traits"]
+            roles = value["roles"]
+            if self.role in roles:
+                role = roles[self.role]
+                if "traits" in role:
+                    self.traits = role["traits"]
 
         self.mandate = None
         if "mandate" in value:

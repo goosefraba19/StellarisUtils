@@ -22,12 +22,8 @@
 				"key": "voronoi",
 				"hyperlane_point_spacing": 8,
 				"rings": {
-					"autogen": true,
-					"autogen_padding": 15,
-					"autogen_spacing": 5,
-					"list": [
-						{ "x": 0, "y": 0, "r": 0, "s": 0 }
-					],
+					"padding": 15,
+					"spacing": 5,
 					"debug": false,
 					"debug_color": [256,256,256]
 				},
@@ -43,8 +39,8 @@
 						"first": { "key": "system_owner" },
 						"second": [0,0,0]
 					},
-					"second": { "key": "system_controller" },
-					"weight": 0.25
+					"second": { "key": "random" },
+					"weight": 0.0
 				}
 			},
 			{

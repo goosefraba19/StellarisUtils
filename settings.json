@@ -39,8 +39,8 @@
 						"first": { "key": "system_owner" },
 						"second": [0,0,0]
 					},
-					"second": { "key": "random" },
-					"weight": 0.0
+					"second": { "key": "system_controller" },
+					"weight": 0.25
 				}
 			},
 			{

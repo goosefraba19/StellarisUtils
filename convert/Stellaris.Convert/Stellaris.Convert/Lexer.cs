@@ -111,7 +111,13 @@ namespace Stellaris.Convert
                 }
 
                 char c = (char)this.next;
-                if (c == '\"')
+                if (c == '\\')
+                {
+                    this.builder.Append(c);
+                    c = (char)this.reader.Read();
+                    this.builder.Append(c);
+                }
+                else if (c == '\"')
                 {
                     this.next = this.reader.Read();
                     return this.builder.ToString();

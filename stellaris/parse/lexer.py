@@ -3,7 +3,7 @@ import re
 class Lexer:
     def __init__(self):
         self._pattern_text = re.compile(r"[a-zA-Z0-9_:.@-]+")
-        self._pattern_escaped_text = re.compile(r"\"([^\"]*)\"")
+        self._pattern_escaped_text = re.compile(r"\"((\\.|[^\"])*)\"")
 
     def input(self, data):
         self._index = 0
